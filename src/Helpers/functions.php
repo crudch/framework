@@ -11,9 +11,15 @@ function app($name)
     return \Crudch\Container\Container::get($name);
 }
 
+/**
+ * @param $key
+ *
+ * @return mixed
+ */
 function config($key)
 {
-    return app('config')[$key];
+    return app(\Crudch\Config\Config::class)
+        ->get($key);
 }
 
 /**
@@ -75,14 +81,14 @@ function json($data, $code = 200)
 
 /**
  * @param int  $code
- * @param null $data
+ * @param null $message
  */
-function abort(int $code = 404, $data = null)
+function abort(int $code = 404, $message = null)
 {
-    (new \System\Http\Response())->abort($code, $data);
+    /** @noinspection PhpUnhandledExceptionInspection */
+    throw new \Crudch\Http\Exceptions\AbortException($message, $code);
 }
 
-/** @noinspection PhpDocMissingThrowsInspection */
 /**
  * @param string $name
  * @param array  $params
@@ -94,7 +100,7 @@ function render($name, array $params = [])
     static $path;
 
     /** @noinspection PhpUnhandledExceptionInspection */
-    return (new \System\View($path ?: $path = config('view')['path']))
+    return (new \Crudch\View\View($path ?: $path = config('view')['path']))
         ->render($name, $params);
 }
 
@@ -102,14 +108,20 @@ function render($name, array $params = [])
  * @param string $name
  * @param array  $params
  *
- * @return \System\Http\Response
+ * @return \Crudch\Http\Response
  */
 function view($name, array $params = [])
 {
-    return (new \System\Http\Response())
+    return (new \Crudch\Http\Response())
         ->setData(render($name, $params));
 }
 
+/**
+ * @param string $name
+ * @param null   $default
+ *
+ * @return null
+ */
 function old($name, $default = null)
 {
     if (empty($_SESSION[$name])) {
@@ -139,12 +151,12 @@ function e($string)
 /**
  * @param string $time
  *
- * @return \System\WarDate
+ * @return \Crudch\Date\CrutchDate
  */
-function wdate($time = 'now')
+function crutchDate($time = 'now')
 {
     try {
-        $date = new \System\WarDate($time);
+        $date = new Crudch\Date\CrutchDate($time);
     } catch (\Throwable $e) {
         $date = null;
     }
@@ -174,7 +186,6 @@ function remember($key, callable $callback, $time = 0)
  * @param callable $callback
  *
  * @return bool
- * @throws \System\Exceptions\TransactionException
  */
 function transaction(callable $callback)
 {
@@ -187,8 +198,8 @@ function transaction(callable $callback)
         return $db->commit();
     } catch (\Throwable $e) {
         $db->rollBack();
-
-        throw new \System\Exceptions\TransactionException('Неудачная транзакция', 500, $e);
+        /** @noinspection PhpUnhandledExceptionInspection */
+        throw new \Crudch\Database\Exceptions\TransactionException('Неудачная транзакция', 500, $e);
     }
 }
 
