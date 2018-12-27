@@ -23,6 +23,24 @@ function config($key)
 }
 
 /**
+ * @return string
+ */
+function root_path(): string
+{
+    static $root;
+
+    return $root ?: $root = app('root_path');
+}
+
+/**
+ * @return string
+ */
+function public_path(): string
+{
+    return root_path() . '/public';
+}
+
+/**
  * @return \PDO
  */
 function db()
@@ -43,7 +61,7 @@ function request()
  */
 function cache()
 {
-    return app('cache');
+    return app(\Crudch\Cache\Cache::class);
 }
 
 /**
@@ -97,10 +115,8 @@ function abort(int $code = 404, $message = null)
  */
 function render($name, array $params = [])
 {
-    static $path;
-
     /** @noinspection PhpUnhandledExceptionInspection */
-    return (new \Crudch\View\View($path ?: $path = config('view')['path']))
+    return (new \Crudch\View\View(root_path() . '/template'))
         ->render($name, $params);
 }
 
