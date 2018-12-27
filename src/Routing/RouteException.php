@@ -2,7 +2,7 @@
 
 namespace Crudch\Routing;
 
-class RouteException extends \RuntimeException
+class RouteException extends \Exception
 {
     protected $code = 404;
 }

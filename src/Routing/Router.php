@@ -83,6 +83,7 @@ class Router
 
     /**
      * @return array
+     * @throws RouteException
      */
     public function match(): array
     {

@@ -13,6 +13,7 @@
   ],
   "require": {
     "php": "^7.2",
+    "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*"
   },
@@ -22,7 +23,10 @@
   "autoload": {
     "psr-4": {
       "Crudch\\": "src/"
-    }
+    },
+    "files": [
+      "src/Helpers/functions.php"
+    ]
   },
   "config": {
     "preferred-install": "dist",
