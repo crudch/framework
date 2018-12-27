@@ -18,8 +18,14 @@ class Bootstrap
 
     protected function setRegistry(): void
     {
-        foreach (require __DIR__ . '/registry.php' as $key => $value) {
+        /** @noinspection PhpIncludeInspection */
+        $registry = array_merge(
+            require __DIR__ . '/registry.php',
+            require root_path() . '/App/registry.php'
+        );
+
+        array_walk($registry, function ($value, $key) {
             Container::set($key, $value);
-        }
+        });
     }
 }
