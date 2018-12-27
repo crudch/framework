@@ -16,6 +16,7 @@ class Required extends Validator
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function process($value)
     {
@@ -26,6 +27,7 @@ class Required extends Validator
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validate($value)
     {

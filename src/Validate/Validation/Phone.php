@@ -12,7 +12,13 @@ use Crudch\Validate\Exceptions\ValidateException;
  */
 class Phone extends Validator
 {
-    public function validate($value)
+    /**
+     * @param $value
+     *
+     * @return string
+     * @throws ValidateException
+     */
+    public function validate($value): string
     {
         $value = preg_replace('~\D~', '', $value);
 

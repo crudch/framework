@@ -16,6 +16,7 @@ class Integer extends Validator
      * @param $value
      *
      * @return int
+     * @throws ValidateException
      */
     public function validate($value): int
     {

@@ -30,6 +30,7 @@ class Min extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateInteger($value)
     {
@@ -44,6 +45,7 @@ class Min extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateString($value)
     {
@@ -60,6 +62,7 @@ class Min extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateArray($value)
     {

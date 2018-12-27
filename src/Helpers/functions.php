@@ -1,5 +1,5 @@
 <?php
-
+/** @noinspection PhpDocMissingThrowsInspection */
 /**
  * @param string $name
  *
@@ -7,6 +7,7 @@
  */
 function app($name)
 {
+    /** @noinspection PhpUnhandledExceptionInspection */
     return \Crudch\Container\Container::get($name);
 }
 

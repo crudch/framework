@@ -16,6 +16,7 @@ class Email extends Validator
      * @param $value
      *
      * @return string
+     * @throws ValidateException
      */
     public function validate($value): string
     {

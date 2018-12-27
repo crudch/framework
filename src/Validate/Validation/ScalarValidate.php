@@ -13,6 +13,12 @@ use Crudch\Validate\Exceptions\ValidateException;
 abstract class ScalarValidate extends Validator
 {
 
+    /**
+     * @param $value
+     *
+     * @return mixed
+     * @throws ValidateException
+     */
     public function validate($value)
     {
         $this->setParamValidate();

@@ -42,6 +42,7 @@ class Between extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateInteger($value)
     {
@@ -58,6 +59,7 @@ class Between extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateString($value)
     {
@@ -74,6 +76,7 @@ class Between extends ScalarValidate
      * @param $value
      *
      * @return mixed
+     * @throws ValidateException
      */
     public function validateArray($value)
     {
