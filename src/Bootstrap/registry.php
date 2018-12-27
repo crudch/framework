@@ -1,14 +1,11 @@
 <?php
-/**
- * @var $this \Crudch\Bootstrap\Bootstrap;
- */
 
 return [
     /**
      * Загружает конфиг
      */
     \Crudch\Config\Config::class => function () {
-        return new Crudch\Config\Config(root_path() . '/config.php');
+        return new \Crudch\Config\Config(root_path() . '/config.php');
     },
 
     /**
@@ -31,6 +28,6 @@ return [
     \Crudch\Cache\Cache::class => function () {
         $cache = config('cache_driver');
 
-        return new Crudch\Cache\Cache(new $cache(root_path() . '/cache'));
+        return new \Crudch\Cache\Cache(new $cache(root_path() . '/cache'));
     },
 ];
