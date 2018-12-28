@@ -29,12 +29,15 @@ class RouteMiddleware implements MiddlewareInterface
 
 
         $pipline = new Pipline();
+        //todo: Придумать загрузку middleware
+        $registrator = 'App\\Middleware\\Registrator';
 
         foreach ($route->getMiddleware() as $name) {
-            if (!array_key_exists($name, Registrator::$middleware)) {
+            /** @noinspection PhpUndefinedFieldInspection */
+            if (!array_key_exists($name, $registrator::$middleware)) {
                 throw new \RuntimeException("Middleware [ {$name} ] не существует.");
             }
-            $pipline->pipe(Registrator::$middleware[$name]);
+            $pipline->pipe($registrator::$middleware[$name]);
         }
 
         $pipline->pipe(function () use ($route) {
