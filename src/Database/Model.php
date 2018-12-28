@@ -7,7 +7,7 @@ namespace Crudch\Database;
  *
  * @property int $id
  *
- * @package System
+ * @package Crudch\Database
  */
 abstract class Model
 {
@@ -30,8 +30,7 @@ abstract class Model
      */
     public static function findById($id)
     {
-        $sql = /** @lang text */
-            'select * from ' . static::$table . ' where id = ' . (int)$id . ' limit 1';
+        $sql = /** @lang */ 'select * from ' . static::$table . ' where id = ' . (int)$id . ' limit 1';
 
         return db()->query($sql)
             ->fetchObject(static::class);
@@ -51,7 +50,7 @@ abstract class Model
             $v = $k . '=:' . $k;
         });
 
-        $sql = 'select * from ' . static::$table . ' where ' . implode(' and ', $vars) . ' limit 1';
+        $sql = /** @lang */ 'select * from ' . static::$table . ' where ' . implode(' and ', $vars) . ' limit 1';
 
         $sth = db()->prepare($sql);
         $sth->execute($attr);
@@ -61,8 +60,7 @@ abstract class Model
 
     public static function all($order = 'asc', $limit = 0)
     {
-        $sql = /** @lang text */
-            'select * from ' . static::$table . ' order by id ' . $order;
+        $sql = /** @lang */ 'select * from ' . static::$table . ' order by id ' . $order;
         (int)$limit > 0 && $sql .= ' limit ' . (int)$limit;
 
         return db()->query($sql)->fetchAll(\PDO::FETCH_CLASS, static::class);
@@ -75,8 +73,7 @@ abstract class Model
      */
     public static function delete($id)
     {
-        $sql = /** @lang text */
-            'delete from ' . static::$table . ' where id = ' . (int)$id;
+        $sql = /** @lang */ 'delete from ' . static::$table . ' where id = ' . (int)$id;
 
         return db()->exec($sql);
     }
@@ -95,6 +92,17 @@ abstract class Model
             return $this->$method($value);
         }
 
+        return $this->specialSet($name, $value);
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    protected function specialSet($name, $value)
+    {
         return $this->{$name} = $value;
     }
 
@@ -188,7 +196,7 @@ abstract class Model
         $vars = get_object_vars($this);
         unset($vars['fillable']);
 
-        $sql = 'insert into ' . static::$table . ' (' . implode(',', array_keys($vars)) . ') 
+        $sql = /** @lang */ 'insert into ' . static::$table . ' (' . implode(',', array_keys($vars)) . ') 
             values 
         (' . ':' . implode(',:', array_keys($vars)) . ')';
 
@@ -246,11 +254,11 @@ abstract class Model
 
     public function setCreatedAt($value)
     {
-        $this->{'created_at'} = wdate($value);
+        $this->{'created_at'} = crutchDate($value);
     }
 
     public function setUpdatedAt($value)
     {
-        $this->{'updated_at'} = wdate($value);
+        $this->{'updated_at'} = crutchDate($value);
     }
 }
