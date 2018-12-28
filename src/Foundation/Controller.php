@@ -13,7 +13,7 @@ use Crudch\Container\Container;
 abstract class Controller
 {
     /**
-     * @param         $action
+     * @param string  $action
      * @param Request $request
      *
      * @return mixed

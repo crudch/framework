@@ -3,6 +3,7 @@
 namespace Crudch\Middleware;
 
 use Crudch\Http\Request;
+use Crudch\Foundation\Controller;
 
 /**
  * Class ControllerMiddleware
@@ -12,7 +13,7 @@ use Crudch\Http\Request;
 class ControllerMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \System\Controller
+     * @var Controller
      */
     private $controller;
 
@@ -21,6 +22,12 @@ class ControllerMiddleware implements MiddlewareInterface
      */
     private $action;
 
+    /**
+     * ControllerMiddleware constructor.
+     *
+     * @param string $controller
+     * @param string $action
+     */
     public function __construct($controller, $action)
     {
         $controller = 'App\\Controllers\\' . $controller;
@@ -28,6 +35,13 @@ class ControllerMiddleware implements MiddlewareInterface
         $this->action = $action;
     }
 
+    /**
+     * @param Request  $request
+     * @param callable $next
+     *
+     * @return mixed
+     * @throws \ReflectionException
+     */
     public function handle(Request $request, callable $next)
     {
         return $this->controller->callAction($this->action, $request);
