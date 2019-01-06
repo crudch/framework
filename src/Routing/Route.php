@@ -48,7 +48,7 @@ class Route
      *
      * @return Route
      */
-    public function getName(string $name): Route
+    public function setName(string $name): Route
     {
         $this->name = $name;
 
