@@ -353,7 +353,7 @@ function flatten($array)
  */
 function token($salt)
 {
-    return hash_hmac('gost', $salt . randomString(32), time());
+    return hash_hmac('gost', $salt . randomString(), time());
 }
 
 /**
