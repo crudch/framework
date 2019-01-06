@@ -10,11 +10,6 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(StdClass::class, Container::get(StdClass::class));
     }
 
-    public function testGetCachedObject()
-    {
-        $this->assertEquals(Container::get(StdClass::class), Container::get(StdClass::class));
-    }
-
     public function testSet()
     {
         $class = new StdClass();
@@ -25,7 +20,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \Crudch\Container\ContainerException
      */
     public function testNotExistsClassInContainer()
     {
@@ -48,7 +43,7 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \Crudch\Container\ContainerException
      */
     public function testExeptionUnableToInstance()
     {
@@ -56,17 +51,34 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \Crudch\Container\ContainerException
      */
     public function testExeptionUnableToInstanceInstance()
     {
         $instance = Container::get(InstancePrivate::class);
     }
 
+    public function testEqualsContainerClasses()
+    {
+        Container::set('foo', function () {
+            return new Foo();
+        });
 
+        $foo = Container::get('foo');
+
+        $this->assertSame($foo, Container::get('foo'));
+    }
+
+    public function testConstructWithDefaultValue()
+    {
+        $default = Container::get(DefaultValue::class);
+
+        $this->assertSame($default->d, 'default');
+    }
 }
 
 class Foo {}
+class DefaultValue{ public $d; public function __construct($d = 'default'){$this->d=$d;}}
 class Bar { public function __construct(Foo $foo) {} }
 class Baz { public function __construct(Bar $bar) {} }
 
