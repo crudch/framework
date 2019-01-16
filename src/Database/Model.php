@@ -30,7 +30,8 @@ abstract class Model
      */
     public static function findById($id)
     {
-        $sql = /** @lang */ 'select * from ' . static::$table . ' where id = ' . (int)$id . ' limit 1';
+        $sql = /** @lang */
+            'select * from ' . static::$table . ' where id = ' . (int)$id . ' limit 1';
 
         return db()->query($sql)
             ->fetchObject(static::class);
@@ -50,7 +51,8 @@ abstract class Model
             $v = $k . '=:' . $k;
         });
 
-        $sql = /** @lang */ 'select * from ' . static::$table . ' where ' . implode(' and ', $vars) . ' limit 1';
+        $sql = /** @lang */
+            'select * from ' . static::$table . ' where ' . implode(' and ', $vars) . ' limit 1';
 
         $sth = db()->prepare($sql);
         $sth->execute($attr);
@@ -60,7 +62,8 @@ abstract class Model
 
     public static function all($order = 'asc', $limit = 0)
     {
-        $sql = /** @lang */ 'select * from ' . static::$table . ' order by id ' . $order;
+        $sql = /** @lang */
+            'select * from ' . static::$table . ' order by id ' . $order;
         (int)$limit > 0 && $sql .= ' limit ' . (int)$limit;
 
         return db()->query($sql)->fetchAll(\PDO::FETCH_CLASS, static::class);
@@ -73,7 +76,8 @@ abstract class Model
      */
     public static function delete($id)
     {
-        $sql = /** @lang */ 'delete from ' . static::$table . ' where id = ' . (int)$id;
+        $sql = /** @lang */
+            'delete from ' . static::$table . ' where id = ' . (int)$id;
 
         return db()->exec($sql);
     }
@@ -97,7 +101,7 @@ abstract class Model
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -196,9 +200,10 @@ abstract class Model
         $vars = get_object_vars($this);
         unset($vars['fillable']);
 
-        $sql = /** @lang */ 'insert into ' . static::$table . ' (' . implode(',', array_keys($vars)) . ') 
+        $sql = /** @lang */
+            'insert into ' . static::$table . ' (' . implode(',', $tmp = array_keys($vars)) . ') 
             values 
-        (' . ':' . implode(',:', array_keys($vars)) . ')';
+        (' . ':' . implode(',:', $tmp) . ')';
 
         $db = db();
         if (true === $result = $db->prepare($sql)->execute($vars)) {
