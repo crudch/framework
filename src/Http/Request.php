@@ -34,6 +34,11 @@ class Request
      */
     protected $all;
 
+    /**
+     * @var array
+     */
+    protected $headers;
+
     public function __construct()
     {
         $this->get = $_GET;
