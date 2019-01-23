@@ -82,11 +82,37 @@ class Request
      */
     public function all(): array
     {
-        if (null !== $this->all) {
-            return $this->all;
+        if (null === $this->all) {
+            $this->all = array_merge($this->post(), $this->get());
         }
 
-        return $this->all = array_merge($this->post(), $this->get());
+        return $this->all;
+    }
+
+    /**
+     * @return array
+     */
+    public function headers(): array
+    {
+        if (null === $this->headers) {
+            $this->headers = $this->getHttpHeaders();
+        }
+
+        return $this->headers;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getHttpHeaders()
+    {
+        $headers = [];
+
+        array_walk($_SERVER, function ($value, $key) use (&$headers){
+            0 === strpos($key, 'HTTP_') && $headers[substr($key, 5)] = $value;
+        });
+
+        return $headers;
     }
 
     /**
