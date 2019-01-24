@@ -13,6 +13,20 @@ use Crudch\Routing\Router;
  */
 class RouteMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var string
+     */
+    protected $mode;
+
+    /**
+     * RouteMiddleware constructor.
+     *
+     * @param string $mode
+     */
+    public function __construct($mode)
+    {
+        $this->mode = $mode;
+    }
 
     /**
      * @param Request  $request
@@ -24,9 +38,8 @@ class RouteMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next)
     {
         /** @var Route $route */
-        [$route, $attributes] = Router::load(root_path() . '/app/route.php')->match();
+        [$route, $attributes] = Router::load(root_path() . "/routes/{$this->mode}.php")->match();
         $request->setAttributes($attributes);
-
 
         $pipline = new Pipline();
         //todo: Придумать загрузку middleware
@@ -40,7 +53,7 @@ class RouteMiddleware implements MiddlewareInterface
             $pipline->pipe($registrator::$middleware[$name]);
         }
 
-        $pipline->pipe(function () use ($route) {
+        $pipline->pipe(function () use (&$route) {
             return new ControllerMiddleware(... $route->getHandler());
         });
 

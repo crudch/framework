@@ -16,17 +16,24 @@ use Crudch\Middleware\ErrorHandlerMiddleware;
 class Bootstrap
 {
     /**
+     * @var string
+     */
+    protected $path;
+    /**
      * Bootstrap constructor.
      *
      * @param string $path
      */
     public function __construct(string $path)
     {
-        Container::set('root_path', $path);
+        $this->path = $path;
     }
 
     public function start()
     {
+
+
+
         $this->setRegistry('web');
 
         $pipline = new Pipline();
@@ -39,7 +46,9 @@ class Bootstrap
             $pipline->pipe($middleware);
         }
 
-        $pipline->pipe(RouteMiddleware::class);
+        $pipline->pipe(function () {
+            return new RouteMiddleware();
+        });
 
         echo $pipline->run(app(Request::class));
     }
@@ -47,10 +56,16 @@ class Bootstrap
     protected function setRegistry($app): void
     {
         /** @noinspection PhpIncludeInspection */
+        $user_registry = require root_path() . '/App/registry.php';
+
         $registry = array_merge(
+            ['root_path' => $this->path],
             require __DIR__ . '/registry.php',
-            require root_path() . '/App/registry.php'[$app]
+            $user_registry['global'],
+            $user_registry[$app]
         );
+
+        var_dump($registry);die;
 
         array_walk($registry, function ($value, $key) {
             Container::set($key, $value);
