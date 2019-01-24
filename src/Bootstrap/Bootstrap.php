@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUndefinedVariableInspection */
 
 namespace Crudch\Bootstrap;
 
@@ -6,7 +7,6 @@ use Crudch\Http\Request;
 use Crudch\Middleware\Pipline;
 use Crudch\Container\Container;
 use Crudch\Middleware\RouteMiddleware;
-use Crudch\Middleware\ErrorHandlerMiddleware;
 
 /**
  * Class Bootstrap
@@ -40,7 +40,7 @@ class Bootstrap
     public function start()
     {
         $this->setRegistry();
-        $this->preparePipe();
+        $this->setMiddleware();
 
         echo $this->pipline->run(app(Request::class));
     }
@@ -75,16 +75,18 @@ class Bootstrap
         return 'web';
     }
 
-    protected function preparePipe()
+    protected function setMiddleware()
     {
-        $this->pipline->pipe(ErrorHandlerMiddleware::class);
-
         $registrator = 'App\\Middleware\\Registrator';
 
-        /** @noinspection PhpUndefinedFieldInspection */
-        foreach ($registrator::$general_middleware as $middleware) {
+        $registry = array_merge(
+            $registrator::$registry['global'],
+            $registrator::$registry[$this->mode]
+        );
+
+        array_walk($registry, function ($middleware) {
             $this->pipline->pipe($middleware);
-        }
+        });
 
         $this->pipline->pipe(function () {
             return new RouteMiddleware($this->mode);

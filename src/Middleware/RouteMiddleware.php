@@ -42,7 +42,6 @@ class RouteMiddleware implements MiddlewareInterface
         $request->setAttributes($attributes);
 
         $pipline = new Pipline();
-        //todo: Придумать загрузку middleware
         $registrator = 'App\\Middleware\\Registrator';
 
         foreach ($route->getMiddleware() as $name) {
