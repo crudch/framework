@@ -100,7 +100,11 @@ class Request
             $this->headers = $this->getHttpHeaders();
         }
 
-        return $this->getData($this->headers, strtoupper($params));
+        if (null !== $params) {
+            $params = strtoupper($params);
+        }
+
+        return $this->getData($this->headers, $params);
     }
 
     /**
