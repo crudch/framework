@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpIncludeInspection */
 
 namespace Crudch\Routing;
 
@@ -34,12 +35,7 @@ class Router
      */
     public static function load(string $path): Router
     {
-        if (!is_readable($path)) {
-            throw new \RuntimeException("Файл с маршрутами [ {$path} ] не найден");
-        }
-
         $route = new static();
-        /** @noinspection PhpIncludeInspection */
         require $path;
 
         return $route;
