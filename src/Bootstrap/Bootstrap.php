@@ -16,6 +16,16 @@ use Crudch\Middleware\ErrorHandlerMiddleware;
 class Bootstrap
 {
     /**
+     * @var string
+     */
+    protected $mode;
+
+    /**
+     * @var Pipline
+     */
+    protected $pipline;
+
+    /**
      * Bootstrap constructor.
      *
      * @param string $path
@@ -23,33 +33,19 @@ class Bootstrap
     public function __construct(string $path)
     {
         Container::set('root_path', $path);
+        $this->mode = $this->getMode();
+        $this->pipline = new Pipline();
     }
 
     public function start()
     {
+        $this->setRegistry();
+        $this->preparePipe();
 
-
-
-        $this->setRegistry('web');
-
-        $pipline = new Pipline();
-        $pipline->pipe(ErrorHandlerMiddleware::class);
-
-        $registrator = 'App\\Middleware\\Registrator';
-
-        /** @noinspection PhpUndefinedFieldInspection */
-        foreach ($registrator::$general_middleware as $middleware) {
-            $pipline->pipe($middleware);
-        }
-
-        $pipline->pipe(function () {
-            return new RouteMiddleware();
-        });
-
-        echo $pipline->run(app(Request::class));
+        echo $this->pipline->run(app(Request::class));
     }
 
-    protected function setRegistry($app): void
+    protected function setRegistry(): void
     {
         /** @noinspection PhpIncludeInspection */
         $user_registry = require root_path() . '/App/registry.php';
@@ -57,13 +53,41 @@ class Bootstrap
         $registry = array_merge(
             require __DIR__ . '/registry.php',
             $user_registry['global'],
-            $user_registry[$app]
+            $user_registry[$this->mode]
         );
-
-        var_dump($registry);die;
 
         array_walk($registry, function ($value, $key) {
             Container::set($key, $value);
+        });
+    }
+
+    /**
+     * @return string
+     */
+    protected function getMode(): string
+    {
+        if (0 === strpos($_SERVER['REQUEST_URI'], '/api/')) {
+            $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 4);
+
+            return 'api';
+        }
+
+        return 'web';
+    }
+
+    protected function preparePipe()
+    {
+        $this->pipline->pipe(ErrorHandlerMiddleware::class);
+
+        $registrator = 'App\\Middleware\\Registrator';
+
+        /** @noinspection PhpUndefinedFieldInspection */
+        foreach ($registrator::$general_middleware as $middleware) {
+            $this->pipline->pipe($middleware);
+        }
+
+        $this->pipline->pipe(function () {
+            return new RouteMiddleware($this->mode);
         });
     }
 }
