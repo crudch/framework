@@ -16,17 +16,13 @@ use Crudch\Middleware\ErrorHandlerMiddleware;
 class Bootstrap
 {
     /**
-     * @var string
-     */
-    protected $path;
-    /**
      * Bootstrap constructor.
      *
      * @param string $path
      */
     public function __construct(string $path)
     {
-        $this->path = $path;
+        Container::set('root_path', $path);
     }
 
     public function start()
@@ -59,7 +55,6 @@ class Bootstrap
         $user_registry = require root_path() . '/App/registry.php';
 
         $registry = array_merge(
-            ['root_path' => $this->path],
             require __DIR__ . '/registry.php',
             $user_registry['global'],
             $user_registry[$app]
