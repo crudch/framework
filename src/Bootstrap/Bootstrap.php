@@ -23,12 +23,12 @@ abstract class Bootstrap
 
     abstract public function start();
 
-    protected function setRegistry(): void
+    protected function setRegistry($app): void
     {
         /** @noinspection PhpIncludeInspection */
         $registry = array_merge(
             require __DIR__ . '/registry.php',
-            require root_path() . '/App/registry.php'
+            require root_path() . '/App/registry.php'[$app]
         );
 
         array_walk($registry, function ($value, $key) {

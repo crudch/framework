@@ -11,7 +11,7 @@ class StandardBoot extends Bootstrap
 {
     public function start()
     {
-        $this->setRegistry();
+        $this->setRegistry('web');
 
         $pipline = new Pipline();
         $pipline->pipe(ErrorHandlerMiddleware::class);
