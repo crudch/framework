@@ -90,15 +90,17 @@ class Request
     }
 
     /**
-     * @return array
+     * @param mixed $params
+     *
+     * @return string|array|null
      */
-    public function headers(): array
+    public function headers($params = null)
     {
         if (null === $this->headers) {
             $this->headers = $this->getHttpHeaders();
         }
 
-        return $this->headers;
+        return $this->getData($this->headers, $params);
     }
 
     /**
@@ -108,7 +110,7 @@ class Request
     {
         $headers = [];
 
-        array_walk($_SERVER, function ($value, $key) use (&$headers){
+        array_walk($_SERVER, function ($value, $key) use (&$headers) {
             0 === strpos($key, 'HTTP_') && $headers[substr($key, 5)] = $value;
         });
 
