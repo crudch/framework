@@ -425,3 +425,27 @@ function plural($number, $words)
     return $tmp[(($number % 10 === 1) && ($number % 100 !== 11)) ? 0 :
         ((($number % 10 >= 2) && ($number % 10 <= 4) && (($number % 100 < 10) || ($number % 100 >= 20))) ? 1 : 2)];
 }
+
+/**
+ * Рекурсино удалить директорию
+ *
+ * @param string $dir
+ *
+ * @return bool
+ */
+function recursiveRemoveDir($dir)
+{
+    $includes = new FilesystemIterator($dir);
+
+    foreach ($includes as $include) {
+
+        if (is_dir($include) && !is_link($include)) {
+            recursiveRemoveDir($include);
+            continue;
+        }
+
+        @unlink($include);
+    }
+
+    return @rmdir($dir);
+}
