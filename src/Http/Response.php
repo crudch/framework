@@ -44,7 +44,7 @@ class Response
         $url = !empty($_SERVER['HTTP_REFERER']) && false !== filter_var($_SERVER['HTTP_REFERER'], FILTER_VALIDATE_URL)
             ? $_SERVER['HTTP_REFERER'] : '/';
 
-        return $this->redirect($url, 302);
+        return $this->redirect($url);
     }
 
     /**
