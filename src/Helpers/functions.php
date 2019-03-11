@@ -427,7 +427,7 @@ function plural($number, $words)
 }
 
 /**
- * Рекурсино удалить директорию
+ * Рекурсивно удалить директорию
  *
  * @param string $dir
  *
