@@ -28,10 +28,13 @@
       "src/Helpers/functions.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
   "config": {
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "optimize-autoloader": true
+    "sort-packages": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true

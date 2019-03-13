@@ -1,5 +1,7 @@
 <?php
 
+namespace Test\Container;
+
 use Crudch\Container\Container;
 use PHPUnit\Framework\TestCase;
 
@@ -7,12 +9,12 @@ class ContainerTest extends TestCase
 {
     public function testGetObject()
     {
-        $this->assertInstanceOf(StdClass::class, Container::get(StdClass::class));
+        $this->assertInstanceOf(MyClassStd::class, Container::get(MyClassStd::class));
     }
 
     public function testSet()
     {
-        $class = new StdClass();
+        $class = new MyClassStd;
         Container::set('std', $class);
         $this->assertEquals($class, Container::get('std'));
         Container::set('std', $class);
@@ -30,22 +32,22 @@ class ContainerTest extends TestCase
     public function testSetClosure()
     {
         Container::set('closure', function () {
-            return new StdClass();
+            return new MyClassStd;
         });
 
-        $this->assertInstanceOf(StdClass::class, Container::get('closure'));
+        $this->assertInstanceOf(MyClassStd::class, Container::get('closure'));
     }
 
     public function testResolveDependencies()
     {
         $baz = Container::get(Baz::class);
-        $this->assertInstanceOf('Baz', $baz);
+        $this->assertInstanceOf(Baz::class, $baz);
     }
 
     /**
      * @expectedException \Crudch\Container\ContainerException
      */
-    public function testExeptionUnableToInstance()
+    public function testExceptionUnableToInstance()
     {
         $instance = Container::get(Privat::class);
     }
@@ -53,7 +55,7 @@ class ContainerTest extends TestCase
     /**
      * @expectedException \Crudch\Container\ContainerException
      */
-    public function testExeptionUnableToInstanceInstance()
+    public function testExceptionUnableToInstanceInstance()
     {
         $instance = Container::get(InstancePrivate::class);
     }
@@ -77,6 +79,7 @@ class ContainerTest extends TestCase
     }
 }
 
+class MyClassStd extends \StdClass {}
 class Foo {}
 class DefaultValue{ public $d; public function __construct($d = 'default'){$this->d=$d;}}
 class Bar { public function __construct(Foo $foo) {} }
