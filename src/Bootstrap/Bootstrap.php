@@ -48,7 +48,7 @@ class Bootstrap
     protected function setRegistry(): void
     {
         /** @noinspection PhpIncludeInspection */
-        $user_registry = require root_path() . '/App/registry.php';
+        $user_registry = require root_path() . '/app/registry.php';
 
         $registry = array_merge(
             require __DIR__ . '/registry.php',
