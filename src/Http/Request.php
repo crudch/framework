@@ -114,7 +114,7 @@ class Request
     {
         $headers = [];
 
-        array_walk($_SERVER, function ($value, $key) use (&$headers) {
+        array_walk($_SERVER, static function ($value, $key) use (&$headers) {
             0 === strpos($key, 'HTTP_') && $headers[substr($key, 5)] = $value;
         });
 
@@ -154,7 +154,7 @@ class Request
     {
         $params = (array)$params;
 
-        return array_filter($this->all(), function ($key) use (&$params) {
+        return array_filter($this->all(), static function ($key) use (&$params) {
             return !\in_array($key, $params, true);
         }, ARRAY_FILTER_USE_KEY);
     }

@@ -41,7 +41,7 @@ function public_path(): string
 }
 
 /**
- * @return \PDO
+ * @return PDO
  */
 function db()
 {
@@ -173,7 +173,7 @@ function crutchDate($time = 'now')
 {
     try {
         $date = new Crudch\Date\CrutchDate($time);
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         $date = null;
     }
 
@@ -209,10 +209,10 @@ function transaction(callable $callback)
 
     try {
         $db->beginTransaction();
-        $callback();
+        $callback($db);
 
         return $db->commit();
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         $db->rollBack();
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Crudch\Database\Exceptions\TransactionException('Неудачная транзакция', 500, $e);
@@ -337,7 +337,7 @@ function flatten($array)
 {
     $return = [];
 
-    array_walk_recursive($array, function ($a) use (&$return) {
+    array_walk_recursive($array, static function ($a) use (&$return) {
         $return[] = $a;
     });
 
