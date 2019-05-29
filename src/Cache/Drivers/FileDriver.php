@@ -70,6 +70,6 @@ class FileDriver implements CacheDriverInterface
     {
         $file = $this->path . '/' . $key;
 
-        return file_exists($file) ? @unlink($file) : true;
+        return file_exists($file) && @unlink($file);
     }
 }
