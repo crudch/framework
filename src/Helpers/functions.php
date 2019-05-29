@@ -189,7 +189,7 @@ function crutchDate($time = 'now')
  */
 function remember($key, callable $callback, $time = 0)
 {
-    if (!$cache = cache()->get($key)) {
+    if (false === $cache = cache()->get($key)) {
         $cache = $callback();
         cache()->set($key, $cache, $time);
     }
