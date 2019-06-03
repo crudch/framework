@@ -25,7 +25,7 @@ function config($key)
 /**
  * @return string
  */
-function root_path(): string
+function root_path()
 {
     static $root;
 
@@ -35,7 +35,7 @@ function root_path(): string
 /**
  * @return string
  */
-function public_path(): string
+function public_path()
 {
     return root_path() . '/public';
 }

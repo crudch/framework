@@ -56,7 +56,7 @@ class Bootstrap
             $user_registry[$this->mode]
         );
 
-        array_walk($registry, function ($value, $key) {
+        array_walk($registry, static function ($value, $key) {
             Container::set($key, $value);
         });
     }

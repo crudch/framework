@@ -86,7 +86,7 @@ class Container
         }
 
         try {
-            $args = array_map(function (\ReflectionParameter $param) {
+            $args = array_map(static function (\ReflectionParameter $param) {
                 if (null !== $arg = $param->getClass()) {
                     return static::get($arg->getName());
                 }
