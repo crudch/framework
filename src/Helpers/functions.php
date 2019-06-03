@@ -116,7 +116,7 @@ function abort(int $code = 404, $message = null)
 function render($name, array $params = [])
 {
     /** @noinspection PhpUnhandledExceptionInspection */
-    return (new \Crudch\View\View(root_path() . '/template'))
+    return (new \Crudch\View\View(root_path() . '/templates'))
         ->render($name, $params);
 }
 
@@ -302,23 +302,27 @@ function tap($value, callable $callback)
 }
 
 /**
- * @param string $text
- * @param int    $sub
- * @param string $end
+ * Limit the number of characters in a string.
+ *
+ * @param  string  $value
+ * @param  int     $limit
+ * @param  string  $end
+ * @return string
+ */
+function limit($value, $limit = 100, $end = '...')
+{
+    if (mb_strwidth($value, 'UTF-8') <= $limit) {
+        return $value;
+    }
+
+    return rtrim(mb_strimwidth($value, 0, $limit, '', 'UTF-8')).$end;
+}
+
+/**
+ * @param int $bytes
  *
  * @return string
  */
-function subText($text, int $sub, $end = '')
-{
-    if (mb_strlen($text) > $sub) {
-        $text = mb_substr($text, 0, $sub);
-        $text = mb_substr($text, 0, mb_strrpos($text, ' '));
-        $text .= $end;
-    }
-
-    return $text;
-}
-
 function convertBite($bytes)
 {
     $prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
