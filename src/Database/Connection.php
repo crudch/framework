@@ -2,7 +2,9 @@
 
 namespace Crudch\Database;
 
-class Connection extends \PDO
+use PDO;
+
+class Connection extends PDO
 {
     public function __construct(array $config)
     {
