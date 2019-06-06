@@ -8,22 +8,14 @@ use function in_array, is_array;
 /**
  * Trait ActiveRecord
  *
- * @property int $id
+ * @property int    $id
+ * @property-static string $table
+ * @property array  $fillable
  *
  * @package Crudch\Database
  */
 trait ActiveRecord
 {
-    /**
-     * @var array
-     */
-    protected $fillable = [];
-
-    /**
-     * @var string
-     */
-    protected static $table;
-
     /**
      * Получает одну запись по id
      *
