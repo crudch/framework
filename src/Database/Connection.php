@@ -6,7 +6,7 @@ use PDO;
 
 class Connection extends PDO
 {
-    public function __construct(array $config)
+    public function __construct(string $dsn, array $config)
     {
         parent::__construct(
             "mysql:dbname={$config['dbname']};host={$config['host']};charset=utf8mb4",
@@ -14,5 +14,10 @@ class Connection extends PDO
             $config['password'],
             $config['options']
         );
+    }
+
+    public static function connect()
+    {
+
     }
 }

@@ -19,7 +19,7 @@ return [
      * Инифиализирует подключение базе данных
      */
     \Crudch\Database\Connection::class => static function () {
-        return new \Crudch\Database\Connection(config('db'));
+        return \Crudch\Database\Connection::connect();
     },
 
     /**
