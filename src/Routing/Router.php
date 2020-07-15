@@ -125,7 +125,7 @@ class Router
      */
     protected function resolvePattern(string $pattern): string
     {
-        $pattern = preg_replace_callback('#{([^\}:]+):?([^\}]*?)\}#', function ($matches) {
+        $pattern = preg_replace_callback('#{([^}:]+):?([^}]*?)}#', static function ($matches) {
             return '(?P<' . $matches[1] . '>' . ($matches[2] ?: '.+') . ')';
         }, $pattern);
 
