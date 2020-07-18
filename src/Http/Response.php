@@ -55,10 +55,10 @@ class Response
      */
     public function json($data, $code = 200): Response
     {
-        $json = json_encode($data, JSON_UNESCAPED_UNICODE);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \InvalidArgumentException(json_last_error_msg());
+        try {
+            $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        } catch (\JsonException $e) {
+            throw new \InvalidArgumentException($e->getMessage());
         }
 
         $this->setHeader('Content-Type: application/json;charset=utf-8', $code);

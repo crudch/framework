@@ -2,10 +2,11 @@
 
 namespace Crudch\Middleware\Handlers;
 
+use Throwable;
 use Crudch\Http\Request;
 use Crudch\Http\Exceptions\MultiException;
 
-class WebHandlerMiddleware extends ErrorHandlerMiddleware
+class WebExceptionsMiddleware extends ExceptionsMiddleware
 {
     /**
      * @param Request        $request
@@ -21,18 +22,16 @@ class WebHandlerMiddleware extends ErrorHandlerMiddleware
     }
 
     /**
-     * @param \Throwable $e
+     * @param Throwable $e
      *
      * @return mixed
      */
-    protected function generateError(\Throwable $e)
+    protected function generateError(Throwable $e)
     {
-        $code = $this->getStatusCode($e);
-
-        http_response_code($code);
+        http_response_code($this->getStatusCode($e));
 
         if (isLocal()) {
-            var_dump($code, $e);
+            var_dump($e->getCode(), $e);
             die;
         }
 

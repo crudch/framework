@@ -1,12 +1,14 @@
 <?php
 /** @noinspection PhpRedundantCatchClauseInspection */
+
 namespace Crudch\Middleware\Handlers;
 
+use Throwable;
 use Crudch\Http\Request;
 use Crudch\Http\Exceptions\MultiException;
 use Crudch\Middleware\MiddlewareInterface;
 
-abstract class ErrorHandlerMiddleware implements MiddlewareInterface
+abstract class ExceptionsMiddleware implements MiddlewareInterface
 {
     /**
      * @param Request  $request
@@ -20,7 +22,7 @@ abstract class ErrorHandlerMiddleware implements MiddlewareInterface
             return $next($request);
         } catch (MultiException $e) {
             return $this->generateMultiError($request, $e);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->generateError($e);
         }
     }
@@ -34,18 +36,18 @@ abstract class ErrorHandlerMiddleware implements MiddlewareInterface
     abstract protected function generateMultiError(Request $request, MultiException $e);
 
     /**
-     * @param \Throwable $e
+     * @param Throwable $e
      *
      * @return mixed
      */
-    abstract protected function generateError(\Throwable $e);
+    abstract protected function generateError(Throwable $e);
 
     /**
-     * @param \Throwable $e
+     * @param Throwable $e
      *
      * @return int
      */
-    protected function getStatusCode(\Throwable $e): int
+    protected function getStatusCode(Throwable $e): int
     {
         $code = $e->getCode();
 

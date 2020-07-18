@@ -2,10 +2,12 @@
 
 namespace Crudch\Middleware\Handlers;
 
+use Throwable;
 use Crudch\Http\Request;
 use Crudch\Http\Exceptions\MultiException;
+use function get_class;
 
-class ApiHandlerMiddleware extends ErrorHandlerMiddleware
+class ApiExceptionsMiddleware extends ExceptionsMiddleware
 {
     /**
      * @param Request        $request
@@ -19,11 +21,11 @@ class ApiHandlerMiddleware extends ErrorHandlerMiddleware
     }
 
     /**
-     * @param \Throwable $e
+     * @param Throwable $e
      *
      * @return mixed
      */
-    protected function generateError(\Throwable $e)
+    protected function generateError(Throwable $e)
     {
         $code = $this->getStatusCode($e);
 
@@ -36,18 +38,18 @@ class ApiHandlerMiddleware extends ErrorHandlerMiddleware
 
     /**
      * @param int        $code
-     * @param \Throwable $e
+     * @param Throwable $e
      *
      * @return mixed
      */
-    protected function generateDebug(int $code, \Throwable $e)
+    protected function generateDebug(int $code, Throwable $e)
     {
         return json([
-            'except'  => \get_class($e),
+            'except'  => get_class($e),
             'message' => $e->getMessage(),
             'line'    => $e->getLine(),
             'file'    => $e->getFile(),
-            'code'    => $code,
+            'code'    => $e->getCode(),
         ], $code);
     }
 

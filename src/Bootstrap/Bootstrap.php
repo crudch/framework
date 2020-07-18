@@ -80,6 +80,7 @@ class Bootstrap
         $registrator = 'App\\Middleware\\Registrator';
 
         $registry = array_merge(
+            ['App\\Exceptions\\WebExceptionsMiddleware', 'App\\Exceptions\\ApiExceptionsMiddleware'],
             $registrator::$registry['global'],
             $registrator::$registry[$this->mode]
         );
