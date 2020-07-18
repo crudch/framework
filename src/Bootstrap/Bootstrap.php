@@ -80,7 +80,7 @@ class Bootstrap
         $registrator = 'App\\Middleware\\Registrator';
 
         $registry = array_merge(
-            (array)'App\\Exceptions\\' . ucfirst($this->mode) .'ExceptionsMiddleware',
+            ['App\\Exceptions\\' . ucfirst($this->mode) . 'ExceptionsMiddleware'],
             $registrator::$registry['global'],
             $registrator::$registry[$this->mode]
         );
