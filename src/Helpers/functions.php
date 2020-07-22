@@ -1,43 +1,50 @@
 <?php
 /** @noinspection PhpDocMissingThrowsInspection */
+
+/** @noinspection PhpUnhandledExceptionInspection */
+
 /**
  * @param string $name
  *
  * @return mixed|object
  */
-function app($name)
+function app(string $name)
 {
-    /** @noinspection PhpUnhandledExceptionInspection */
     return \Crudch\Container\Container::get($name);
 }
 
 /**
- * @param $key
+ * @param string $key
  *
  * @return mixed
  */
-function config($key)
+function config(?string $key = null)
 {
-    return app(\Crudch\Config\Config::class)
-        ->get($key);
+    $config = app('config_global');
+
+    return null === $key ? $config : $config[$key] ?? null;
 }
 
 /**
+ * @param string|null $path
+ *
  * @return string
  */
-function root_path()
+function root_path(?string $path = null): string
 {
     static $root;
 
-    return $root ?: $root = app('root_path');
+    return ($root ?: $root = app('root_path')) . $path;
 }
 
 /**
+ * @param string|null $path
+ *
  * @return string
  */
-function public_path()
+function public_path(?string $path = null): string
 {
-    return root_path() . '/public';
+    return root_path('/public') . $path;
 }
 
 /**
@@ -66,11 +73,11 @@ function cache()
 
 /**
  * @param string $url
- * @param int    $code
+ * @param int $code
  *
  * @return \Crudch\Http\Response
  */
-function redirect($url, $code = 302)
+function redirect(string $url, int $code = 302)
 {
     return (new \Crudch\Http\Response())
         ->redirect($url, $code);
@@ -87,42 +94,42 @@ function back()
 
 /**
  * @param mixed $data
- * @param int   $code
+ * @param int $code
  *
  * @return \Crudch\Http\Response
  */
-function json($data, $code = 200)
+function json($data, int $code = 200)
 {
     return (new \Crudch\Http\Response())
         ->json($data, $code);
 }
 
 /**
- * @param int  $code
- * @param null $message
+ * @param int $code
+ * @param string|null $message
+ *
+ * @throws \Crudch\Http\Exceptions\AbortException
  */
-function abort(int $code = 404, $message = null)
+function abort(int $code = 404, ?string $message = null)
 {
-    /** @noinspection PhpUnhandledExceptionInspection */
     throw new \Crudch\Http\Exceptions\AbortException($message, $code);
 }
 
 /**
  * @param string $name
- * @param array  $params
+ * @param array $params
  *
  * @return string
  */
 function render($name, array $params = [])
 {
-    /** @noinspection PhpUnhandledExceptionInspection */
-    return (new \Crudch\View\View(root_path() . '/templates'))
+    return (new \Crudch\View\View(root_path('/templates')))
         ->render($name, $params);
 }
 
 /**
  * @param string $name
- * @param array  $params
+ * @param array $params
  *
  * @return \Crudch\Http\Response
  */
@@ -134,11 +141,11 @@ function view($name, array $params = [])
 
 /**
  * @param string $name
- * @param null   $default
+ * @param null $default
  *
- * @return null
+ * @return mixed
  */
-function old($name, $default = null)
+function old(string $name, $default = null)
 {
     if (empty($_SESSION[$name])) {
         return $default;
@@ -154,11 +161,11 @@ function old($name, $default = null)
 /**
  * Экранирует теги
  *
- * @param $string string
+ * @param string $string
  *
- * @return string string
+ * @return string
  */
-function e($string)
+function e($string): string
 {
     return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE);
 }
@@ -169,25 +176,19 @@ function e($string)
  *
  * @return \Crudch\Date\CrutchDate
  */
-function crutchDate($time = 'now')
+function crutchDate(string $time = 'now')
 {
-    try {
-        $date = new Crudch\Date\CrutchDate($time);
-    } catch (Throwable $e) {
-        $date = null;
-    }
-
-    return $date;
+    return new Crudch\Date\CrutchDate($time);
 }
 
 /**
- * @param string   $key
+ * @param string $key
  * @param callable $callback
- * @param int      $time
+ * @param int $time
  *
  * @return mixed
  */
-function remember($key, callable $callback, $time = 0)
+function remember(string $key, callable $callback, int $time = 0)
 {
     if (false === $cache = cache()->get($key)) {
         $cache = $callback();
@@ -203,7 +204,7 @@ function remember($key, callable $callback, $time = 0)
  *
  * @return bool
  */
-function transaction(callable $callback)
+function transaction(callable $callback): bool
 {
     $db = db();
 
@@ -214,20 +215,19 @@ function transaction(callable $callback)
         return $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();
-        /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Crudch\Database\Exceptions\TransactionException('Неудачная транзакция', 500, $e);
     }
 }
 
 
 /**
- * @todo Доделать
- *
  * @param $url
  *
  * @return string
+ * @todo Доделать
+ *
  */
-function url($url)
+function url($url): string
 {
     return $url;
 }
@@ -239,7 +239,7 @@ function url($url)
  *
  * @return string
  */
-function absUrl($url)
+function absUrl($url): string
 {
     static $full_url;
 
@@ -247,25 +247,26 @@ function absUrl($url)
 }
 
 /**
- * Проверка на прокашн
+ * Проверка окружения на Local
  *
  * @return bool
  */
-function isProduction()
+function isLocal(): bool
 {
     static $env;
 
-    return $env ?? $env = 'production' === config('env');
+    return $env ?? $env = 'local' === config('env');
 }
 
+
 /**
- * Окружение
+ * Проверка окружения на Production
  *
  * @return bool
  */
-function isLocal()
+function isProduction(): bool
 {
-    return !isProduction();
+    return !isLocal();
 }
 
 /**
@@ -273,7 +274,7 @@ function isLocal()
  *
  * @return string [fooBarBaz]
  */
-function camel($string)
+function camel($string): string
 {
     return lcfirst(studly($string));
 }
@@ -283,13 +284,13 @@ function camel($string)
  *
  * @return string [FooBarBaz]
  */
-function studly($string)
+function studly($string): string
 {
     return implode('', array_map('ucfirst', explode('_', $string)));
 }
 
 /**
- * @param mixed    $value
+ * @param mixed $value
  * @param callable $callback
  *
  * @return mixed
@@ -304,18 +305,19 @@ function tap($value, callable $callback)
 /**
  * Limit the number of characters in a string.
  *
- * @param  string  $value
- * @param  int     $limit
- * @param  string  $end
+ * @param string $value
+ * @param int $limit
+ * @param string $end
+ *
  * @return string
  */
-function limit($value, $limit = 100, $end = '...')
+function limit(string $value, int $limit = 100, string $end = ' ...'): string
 {
     if (mb_strwidth($value, 'UTF-8') <= $limit) {
         return $value;
     }
 
-    return rtrim(mb_strimwidth($value, 0, $limit, '', 'UTF-8')).$end;
+    return rtrim(mb_strimwidth($value, 0, $limit, '', 'UTF-8')) . $end;
 }
 
 /**
@@ -323,7 +325,7 @@ function limit($value, $limit = 100, $end = '...')
  *
  * @return string
  */
-function convertBite($bytes)
+function convertBite(int $bytes)
 {
     $prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
 
@@ -337,42 +339,45 @@ function convertBite($bytes)
  *
  * @return array
  */
-function flatten($array)
+function flatten(array $array): array
 {
     $return = [];
 
-    array_walk_recursive($array, static function ($a) use (&$return) {
-        $return[] = $a;
-    });
+    array_walk_recursive(
+        $array,
+        static function ($a) use (&$return) {
+            $return[] = $a;
+        }
+    );
 
     return $return;
 }
 
 /**
- * Генерирует уникальный токен для пользователя размером в 64 символа на основании соли, например email
+ * Генерирует уникальный token размером в 64 символа на основании соли [не обязательно]
  *
- * @param string $salt
+ * @param string|null $salt
  *
  * @return string
  */
-function token($salt)
+function token(?string $salt = null): string
 {
     return hash_hmac('gost', $salt . randomString(), time());
 }
 
 /**
- * Получить рандомную строку
+ * Получить random строку
  *
  * @param int $length
  *
  * @return string
  */
-function randomString($length = 32)
+function randomString(int $length = 32): string
 {
     try {
         $string = bin2hex(random_bytes((int)(($length - ($length % 2)) / 2)));
     } catch (Throwable $e) {
-        $alpha = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $alpha = str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
         while (strlen($alpha) < $length) {
             $alpha .= $alpha;
@@ -385,11 +390,11 @@ function randomString($length = 32)
 }
 
 /**
- * @param $string
+ * @param string $string
  *
  * @return string
  */
-function compress($string)
+function compress(string $string): string
 {
     $replace = [
         '#>[^\S ]+#s'                                                     => '>',
@@ -412,12 +417,12 @@ function compress($string)
 }
 
 /**
- * @param int    $number
+ * @param int $number
  * @param string $words [1|2|0] - [год|года|лет]
  *
  * @return string
  */
-function plural($number, $words)
+function plural(int $number, string $words): string
 {
     $tmp = explode('|', $words);
 
@@ -437,12 +442,11 @@ function plural($number, $words)
  *
  * @return bool
  */
-function recursiveRemoveDir($dir)
+function recursiveRemoveDir(string $dir): bool
 {
     $includes = new FilesystemIterator($dir);
 
     foreach ($includes as $include) {
-
         if (is_dir($include) && !is_link($include)) {
             recursiveRemoveDir($include);
             continue;

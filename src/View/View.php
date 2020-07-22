@@ -2,6 +2,9 @@
 
 namespace Crudch\View;
 
+use SplStack;
+use Throwable;
+
 /**
  * Class View
  *
@@ -17,7 +20,7 @@ class View
     private $blocks = [];
 
     /**
-     * @var \SplStack
+     * @var SplStack
      */
     private $blockNames;
 
@@ -34,7 +37,7 @@ class View
     public function __construct(string $path)
     {
         $this->path = $path;
-        $this->blockNames = new \SplStack();
+        $this->blockNames = new SplStack();
     }
 
     /**
@@ -42,19 +45,20 @@ class View
      * @param array  $params
      *
      * @return string
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render(string $name, array $params = []): string
     {
         $level = ob_get_level();
         $this->extends = null;
+
         try {
             ob_start();
             extract($params, EXTR_OVERWRITE);
             /** @noinspection PhpIncludeInspection */
             require "{$this->path}/{$name}.php";
             $content = ob_get_clean();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             while (ob_get_level() > $level) {
                 ob_end_clean();
             }
@@ -115,6 +119,7 @@ class View
     public function stop(): void
     {
         $content = ob_get_clean();
+
         $name = $this->blockNames->pop();
         if ($this->hasBlock($name)) {
             return;

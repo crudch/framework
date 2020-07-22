@@ -1,33 +1,32 @@
 <?php
 
+/** @noinspection PhpIncludeInspection */
 return [
     /**
-     * Загружает конфиг
+     * Загрузка Config
      */
-    \Crudch\Config\Config::class => static function () {
-        return new \Crudch\Config\Config(root_path() . '/config.php');
-    },
+    'global_config' => require root_path('/config.php'),
 
     /**
-     * Инициализирует Request
+     * Инициализация Request
      */
     \Crudch\Http\Request::class => static function () {
         return new \Crudch\Http\Request();
     },
 
     /**
-     * Инифиализирует подключение базе данных
+     * Инициализация подключения базе данных
      */
     \Crudch\Database\Connection::class => static function () {
         return \Crudch\Database\Connection::connect();
     },
 
     /**
-     * Инициализирует кэш
+     * Инициализация Cache
      */
     \Crudch\Cache\Cache::class => static function () {
         $cache = config('cache_driver');
 
-        return new \Crudch\Cache\Cache(new $cache(root_path() . '/cache'));
+        return new \Crudch\Cache\Cache(new $cache(root_path('/cache')));
     },
 ];

@@ -33,11 +33,12 @@ class Bootstrap
     public function __construct(string $path)
     {
         Container::set('root_path', $path);
+
         $this->mode = $this->getMode();
         $this->pipline = new Pipline();
     }
 
-    public function start()
+    public function start(): void
     {
         $this->setRegistry();
         $this->setMiddleware();
@@ -48,7 +49,7 @@ class Bootstrap
     protected function setRegistry(): void
     {
         /** @noinspection PhpIncludeInspection */
-        $user_registry = require root_path() . '/app/registry.php';
+        $user_registry = require root_path('/app/registry.php');
 
         $registry = array_merge(
             require __DIR__ . '/registry.php',
@@ -75,7 +76,7 @@ class Bootstrap
         return 'web';
     }
 
-    protected function setMiddleware()
+    protected function setMiddleware(): void
     {
         $registrator = 'App\\Middleware\\Registrator';
 

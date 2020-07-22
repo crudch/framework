@@ -2,6 +2,11 @@
 
 namespace Crudch\Container;
 
+use Closure;
+use Throwable;
+use ReflectionClass;
+use ReflectionParameter;
+
 /**
  * Simple container
  * Class Container
@@ -13,14 +18,14 @@ class Container
     /**
      * Collection of stored bindings
      *
-     * @var array $definitions
+     * @var array
      */
     protected static $definitions = [];
 
     /**
      * Collection of stored instances
      *
-     * @var array $registry
+     * @var array
      */
     protected static $registry = [];
 
@@ -30,17 +35,20 @@ class Container
      * @param string $name
      *
      * @return object|mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public static function get($name)
+    public static function get(string $name)
     {
-        if (array_key_exists($name, self::$registry)) {
-            return self::$registry[$name];
+        if (isset(static::$registry[$name])) {
+            return static::$registry[$name];
         }
 
-        if (array_key_exists($name, self::$definitions)) {
-            return self::$registry[$name] = self::$definitions[$name] instanceof \Closure ?
-                call_user_func(self::$definitions[$name]) : self::$definitions[$name];
+        if (isset(static::$definitions[$name])) {
+            if (static::$definitions[$name] instanceof Closure) {
+                return static::$registry[$name] = call_user_func(static::$definitions[$name]);
+            }
+
+            return static::$registry[$name] = &static::$definitions[$name];
         }
 
         return static::autoResolve($name);
@@ -50,15 +58,15 @@ class Container
      * Bind a new instance construction blueprint within the container
      *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public static function set($name, $value): void
+    public static function set(string $name, $value): void
     {
-        if (array_key_exists($name, self::$registry)) {
-            unset(self::$registry[$name]);
+        if (isset(static::$registry[$name])) {
+            unset(static::$registry[$name]);
         }
 
-        self::$definitions[$name] = $value;
+        static::$definitions[$name] = $value;
     }
 
     /**
@@ -67,7 +75,7 @@ class Container
      * @param string $name
      *
      * @return bool|object
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected static function autoResolve($name)
     {
@@ -75,25 +83,28 @@ class Container
             throw new ContainerException("Unknown service [ {$name} ]");
         }
 
-        $reflectionClass = new \ReflectionClass($name);
+        $reflectionClass = new ReflectionClass($name);
 
         if (!$reflectionClass->isInstantiable()) {
             throw new ContainerException("Unable to instance [ {$name} ]");
         }
 
         if (!$constructor = $reflectionClass->getConstructor()) {
-            return new $name;
+            return new $name();
         }
 
         try {
-            $args = array_map(static function (\ReflectionParameter $param) {
-                if (null !== $arg = $param->getClass()) {
-                    return static::get($arg->getName());
-                }
+            $args = array_map(
+                static function (ReflectionParameter $param) {
+                    if (null !== $arg = $param->getClass()) {
+                        return static::get($arg->getName());
+                    }
 
-                return $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
-            }, $constructor->getParameters());
-        } catch (\Throwable $e) {
+                    return $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
+                },
+                $constructor->getParameters()
+            );
+        } catch (Throwable $e) {
             throw new ContainerException("Unable to resolve complex dependencies [ {$name} ]", 500, $e);
         }
 

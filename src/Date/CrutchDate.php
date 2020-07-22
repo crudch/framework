@@ -2,12 +2,15 @@
 
 namespace Crudch\Date;
 
+use JsonSerializable;
+use DateTimeImmutable;
+
 /**
  * Class Date
  *
  * @package Crudch
  */
-class CrutchDate extends \DateTimeImmutable implements \JsonSerializable
+class CrutchDate extends DateTimeImmutable implements JsonSerializable
 {
     /**
      * @var array
@@ -80,14 +83,12 @@ class CrutchDate extends \DateTimeImmutable implements \JsonSerializable
         return $this->getDateDiff(' назад');
     }
 
-    /** @noinspection PhpDocMissingThrowsInspection */
     /**
      * @return string
      */
     public function getHumansPerson(): string
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $date = new \DateTimeImmutable();
+        $date = new DateTimeImmutable();
 
         if ($this->format('dmY') === $date->format('dmY')) {
             return 'Сегодня';
@@ -140,15 +141,12 @@ class CrutchDate extends \DateTimeImmutable implements \JsonSerializable
         return $this->format('Y-m-d H:i:s');
     }
 
-    /** @noinspection PhpDocMissingThrowsInspection */
-
     /**
      * @return array
      */
     protected function getRealDateDiff(): array
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $date = $this->diff(new \DateTimeImmutable());
+        $date = $this->diff(new DateTimeImmutable());
 
         return [
             'date'   => [
