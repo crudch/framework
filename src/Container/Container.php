@@ -44,11 +44,12 @@ class Container
         }
 
         if (isset(static::$definitions[$name])) {
-            if (static::$definitions[$name] instanceof Closure) {
-                return static::$registry[$name] = call_user_func(static::$definitions[$name]);
-            }
+            static::$registry[$name] = static::$definitions[$name] instanceof Closure
+                ? call_user_func(static::$definitions[$name]) : static::$definitions[$name];
 
-            return static::$registry[$name] = &static::$definitions[$name];
+            unset(static::$definitions[$name]);
+
+            return static::$registry[$name];
         }
 
         return static::autoResolve($name);
