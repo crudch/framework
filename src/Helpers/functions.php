@@ -20,7 +20,7 @@ function app(string $name)
  */
 function config(?string $key = null)
 {
-    $config = app('config_global');
+    $config = app('global_config');
 
     return null === $key ? $config : $config[$key] ?? null;
 }
