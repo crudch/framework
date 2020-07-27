@@ -1,6 +1,11 @@
 <?php
 
 /** @noinspection PhpIncludeInspection */
+
+use Crudch\Cache\Cache;
+use Crudch\Http\Request;
+use Crudch\Database\Connection;
+
 return [
     /**
      * Загрузка Config
@@ -10,23 +15,23 @@ return [
     /**
      * Инициализация Request
      */
-    \Crudch\Http\Request::class => static function () {
-        return new \Crudch\Http\Request();
+    Request::class => static function () {
+        return new Request();
     },
 
     /**
      * Инициализация подключения базе данных
      */
-    \Crudch\Database\Connection::class => static function () {
-        return \Crudch\Database\Connection::connect();
+    Connection::class => static function () {
+        return Connection::connect();
     },
 
     /**
      * Инициализация Cache
      */
-    \Crudch\Cache\Cache::class => static function () {
+    Cache::class => static function () {
         $cache = config('cache_driver');
 
-        return new \Crudch\Cache\Cache(new $cache(root_path('/cache')));
+        return new Cache(new $cache(root_path('/cache')));
     },
 ];
