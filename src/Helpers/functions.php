@@ -1,5 +1,18 @@
 <?php
 /** @noinspection PhpDocMissingThrowsInspection */
+
+/** @noinspection PhpUnhandledExceptionInspection */
+
+use Crudch\App;
+use Crudch\View\View;
+use Crudch\Cache\Cache;
+use Crudch\Http\Request;
+use Crudch\Http\Response;
+use Crudch\Date\CrutchDate;
+use Crudch\Database\Connection;
+use Crudch\Http\Exceptions\AbortException;
+use Crudch\Database\Exceptions\TransactionException;
+
 /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
@@ -9,7 +22,7 @@
  */
 function app(string $name)
 {
-    return \Crudch\Container\Container::get($name);
+    return App::get($name);
 }
 
 /**
@@ -51,43 +64,43 @@ function public_path(?string $path = null): string
  */
 function db()
 {
-    return app(\Crudch\Database\Connection::class);
+    return app(Connection::class);
 }
 
 /**
- * @return \Crudch\Http\Request
+ * @return Request
  */
 function request()
 {
-    return app(\Crudch\Http\Request::class);
+    return app(Request::class);
 }
 
 /**
- * @return \Crudch\Cache\Cache
+ * @return Cache
  */
 function cache()
 {
-    return app(\Crudch\Cache\Cache::class);
+    return app(Cache::class);
 }
 
 /**
  * @param string $url
  * @param int $code
  *
- * @return \Crudch\Http\Response
+ * @return Response
  */
 function redirect(string $url, int $code = 302)
 {
-    return (new \Crudch\Http\Response())
+    return (new Response())
         ->redirect($url, $code);
 }
 
 /**
- * @return \Crudch\Http\Response
+ * @return Response
  */
 function back()
 {
-    return (new \Crudch\Http\Response())
+    return (new Response())
         ->back();
 }
 
@@ -95,11 +108,11 @@ function back()
  * @param mixed $data
  * @param int $code
  *
- * @return \Crudch\Http\Response
+ * @return Response
  */
 function json($data, int $code = 200)
 {
-    return (new \Crudch\Http\Response())
+    return (new Response())
         ->json($data, $code);
 }
 
@@ -107,11 +120,11 @@ function json($data, int $code = 200)
  * @param int $code
  * @param string|null $message
  *
- * @throws \Crudch\Http\Exceptions\AbortException
+ * @throws AbortException
  */
 function abort(int $code = 404, ?string $message = null)
 {
-    throw new \Crudch\Http\Exceptions\AbortException($message, $code);
+    throw new AbortException($message, $code);
 }
 
 /**
@@ -122,7 +135,7 @@ function abort(int $code = 404, ?string $message = null)
  */
 function render($name, array $params = [])
 {
-    return (new \Crudch\View\View(root_path('/templates')))
+    return (new View(root_path('/templates')))
         ->render($name, $params);
 }
 
@@ -130,11 +143,11 @@ function render($name, array $params = [])
  * @param string $name
  * @param array $params
  *
- * @return \Crudch\Http\Response
+ * @return Response
  */
 function view($name, array $params = [])
 {
-    return (new \Crudch\Http\Response())
+    return (new Response())
         ->setData(render($name, $params));
 }
 
@@ -173,11 +186,11 @@ function e($string): string
 /**
  * @param string $time
  *
- * @return \Crudch\Date\CrutchDate
+ * @return CrutchDate
  */
 function crutchDate(string $time = 'now')
 {
-    return new Crudch\Date\CrutchDate($time);
+    return new CrutchDate($time);
 }
 
 /**
@@ -214,7 +227,7 @@ function transaction(callable $callback): bool
         return $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();
-        throw new \Crudch\Database\Exceptions\TransactionException('Неудачная транзакция', 500, $e);
+        throw new TransactionException('Неудачная транзакция', 500, $e);
     }
 }
 
@@ -234,11 +247,11 @@ function url($url): string
 /**
  * Получить абсолютную ссылку
  *
- * @param $url
+ * @param string $url
  *
  * @return string
  */
-function absUrl($url): string
+function absUrl(string $url): string
 {
     static $full_url;
 
@@ -342,12 +355,9 @@ function flatten(array $array): array
 {
     $return = [];
 
-    array_walk_recursive(
-        $array,
-        static function ($a) use (&$return) {
-            $return[] = $a;
-        }
-    );
+    array_walk_recursive($array, static function ($a) use (&$return) {
+        $return[] = $a;
+    });
 
     return $return;
 }
