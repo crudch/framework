@@ -1,19 +1,13 @@
 <?php
-/** @noinspection PhpUndefinedVariableInspection */
 
-namespace Crudch\Bootstrap;
+namespace Crudch;
 
 use Crudch\Http\Request;
 use Crudch\Middleware\Pipline;
 use Crudch\Container\Container;
 use Crudch\Middleware\RouteMiddleware;
 
-/**
- * Class Bootstrap
- *
- * @package Crudch\Bootstrap
- */
-class Bootstrap
+class App extends Container
 {
     /**
      * @var string
@@ -26,16 +20,24 @@ class Bootstrap
     protected $pipline;
 
     /**
-     * Bootstrap constructor.
-     *
-     * @param string $path
+     * App constructor.
      */
-    public function __construct(string $path)
+    protected function __construct()
     {
-        Container::set('root_path', $path);
-
         $this->mode = $this->getMode();
         $this->pipline = new Pipline();
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return App
+     */
+    public static function create(string $path): App
+    {
+        static::set('root_path', $path);
+
+        return new static();
     }
 
     public function start(): void
@@ -46,6 +48,9 @@ class Bootstrap
         echo $this->pipline->run(app(Request::class));
     }
 
+    /**
+     * Регистрирует классы в контейнере
+     */
     protected function setRegistry(): void
     {
         /** @noinspection PhpIncludeInspection */
@@ -58,7 +63,30 @@ class Bootstrap
         );
 
         array_walk($registry, static function ($value, $key) {
-            Container::set($key, $value);
+            static::set($key, $value);
+        });
+    }
+
+    /**
+     * Регистрирует Middleware
+     */
+    protected function setMiddleware(): void
+    {
+        $registrator = 'App\\Middleware\\Registrator';
+
+        /** @noinspection PhpUndefinedVariableInspection */
+        $registry = array_merge(
+            ['App\\Exceptions\\' . ucfirst($this->mode) . 'ExceptionsMiddleware'],
+            $registrator::$registry['global'],
+            $registrator::$registry[$this->mode]
+        );
+
+        array_walk($registry, function ($middleware) {
+            $this->pipline->pipe($middleware);
+        });
+
+        $this->pipline->pipe(function () {
+            return new RouteMiddleware($this->mode);
         });
     }
 
@@ -74,24 +102,5 @@ class Bootstrap
         }
 
         return 'web';
-    }
-
-    protected function setMiddleware(): void
-    {
-        $registrator = 'App\\Middleware\\Registrator';
-
-        $registry = array_merge(
-            ['App\\Exceptions\\' . ucfirst($this->mode) . 'ExceptionsMiddleware'],
-            $registrator::$registry['global'],
-            $registrator::$registry[$this->mode]
-        );
-
-        array_walk($registry, function ($middleware) {
-            $this->pipline->pipe($middleware);
-        });
-
-        $this->pipline->pipe(function () {
-            return new RouteMiddleware($this->mode);
-        });
     }
 }
