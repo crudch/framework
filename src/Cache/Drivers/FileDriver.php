@@ -46,8 +46,8 @@ class FileDriver implements CacheDriverInterface
 
     /**
      * @param string $key
-     * @param mixed  $value
-     * @param int    $time
+     * @param mixed $value
+     * @param int $time
      *
      * @return bool
      */

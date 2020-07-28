@@ -2,6 +2,7 @@
 
 namespace Crudch\Cache\Drivers;
 
+use Memcached;
 use Crudch\Cache\Interfaces\CacheDriverInterface;
 
 /**
@@ -12,7 +13,7 @@ use Crudch\Cache\Interfaces\CacheDriverInterface;
 class MemcachedDriver implements CacheDriverInterface
 {
     /**
-     * @var \Memcached
+     * @var Memcached
      */
     protected $memcached;
 
@@ -21,8 +22,8 @@ class MemcachedDriver implements CacheDriverInterface
      */
     public function __construct()
     {
-        $this->memcached = new \Memcached();
-        $this->memcached->addServer('localhost', 11211);
+        $this->memcached = new Memcached();
+        $this->memcached->addServer('127.0.0.1', 11211);
     }
 
     /**
@@ -37,8 +38,8 @@ class MemcachedDriver implements CacheDriverInterface
 
     /**
      * @param string $key
-     * @param mixed  $value
-     * @param int    $time
+     * @param mixed $value
+     * @param int $time
      *
      * @return bool
      */
@@ -55,5 +56,10 @@ class MemcachedDriver implements CacheDriverInterface
     public function delete(string $key): bool
     {
         return $this->memcached->delete($key);
+    }
+
+    public function getMemcached(): Memcached
+    {
+        return $this->memcached;
     }
 }
