@@ -3,6 +3,7 @@
 namespace Crudch\Database;
 
 use PDO;
+use Crudch\Date\CrutchDate;
 use function in_array, is_array;
 
 /**
@@ -28,7 +29,8 @@ trait ActiveRecord
         $sql = /** @lang */
             'select * from ' . static::$table . ' where id = ' . (int)$id . ' limit 1';
 
-        return db()->query($sql)
+        return db()
+            ->query($sql)
             ->fetchObject(static::class);
     }
 
@@ -55,26 +57,28 @@ trait ActiveRecord
         return $sth->fetchObject(static::class);
     }
 
-    public static function all($order = 'asc', $limit = 0)
+    public static function all($order = 'asc', $limit = 0): array
     {
         $sql = /** @lang */
             'select * from ' . static::$table . ' order by id ' . $order;
         (int)$limit > 0 && $sql .= ' limit ' . (int)$limit;
 
-        return db()->query($sql)->fetchAll(PDO::FETCH_CLASS, static::class);
+        return db()
+            ->query($sql)
+            ->fetchAll(PDO::FETCH_CLASS, static::class);
     }
 
     /**
      * @param int $id
      *
-     * @return int
+     * @return bool
      */
-    public static function delete($id)
+    public static function delete($id): bool
     {
         $sql = /** @lang */
             'delete from ' . static::$table . ' where id = ' . (int)$id;
 
-        return db()->exec($sql);
+        return (bool)db()->exec($sql);
     }
 
     /**
@@ -84,7 +88,7 @@ trait ActiveRecord
      *
      * @return $this
      */
-    public function fill(iterable $data)
+    public function fill(iterable $data): self
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $this->fillable, true)) {
@@ -182,18 +186,18 @@ trait ActiveRecord
         return !$this->isNew() && static::delete($this->id);
     }
 
-    public function setId($value)
+    public function setId($value): int
     {
-        $this->id = (int)$value;
+        return (int)$value;
     }
 
-    public function setCreatedAt($value)
+    public function setCreatedAt($value): CrutchDate
     {
-        $this->{'created_at'} = crutchDate($value);
+        return crutchDate($value);
     }
 
-    public function setUpdatedAt($value)
+    public function setUpdatedAt($value): CrutchDate
     {
-        $this->{'updated_at'} = crutchDate($value);
+        return crutchDate($value);
     }
 }

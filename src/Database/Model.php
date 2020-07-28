@@ -11,52 +11,37 @@ abstract class Model
 {
     /**
      * @param $name
-     * @param $value
-     *
-     * @return int
-     */
-    public function __set($name, $value)
-    {
-        $method = $this->generateMethod('set', $name);
-
-        if (method_exists($this, $method)) {
-            return $this->$method($value);
-        }
-
-        return $this->specialSet($name, $value);
-    }
-
-    /**
-     * @param string $name
-     * @param mixed  $value
-     *
-     * @return mixed
-     */
-    protected function specialSet($name, $value)
-    {
-        return $this->{$name} = $value;
-    }
-
-    /**
-     * @param $name
      *
      * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         return isset($this->{$name});
     }
 
     /**
-     * @param $name
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set(string $name, $value)
+    {
+        $method = $this->generateMethod('set', $name);
+
+        $this->{$name} = method_exists($this, $method) ? $this->$method($value) : $value;
+    }
+
+    /**
+     * @param string $name
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        $method = $this->generateMethod('get', $name);
+        if (method_exists($this, $method = $this->generateMethod('get', $name))) {
+            return $this->$method($name);
+        }
 
-        return method_exists($this, $method) ? $this->$method($name) : null;
+        return $this->{$name} ?? null;
     }
 
     /**
@@ -67,7 +52,7 @@ abstract class Model
      *
      * @return string
      */
-    protected function generateMethod($particle, $data): string
+    protected function generateMethod(string $particle, string $data): string
     {
         $method = array_map('ucfirst', explode('_', $data));
 
