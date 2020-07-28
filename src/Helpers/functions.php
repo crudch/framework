@@ -159,7 +159,7 @@ function view($name, array $params = [])
  */
 function old(string $name, $default = null)
 {
-    if (empty($_SESSION[$name])) {
+    if (!isset($_SESSION[$name])) {
         return $default;
     }
 

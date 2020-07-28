@@ -91,9 +91,9 @@ trait ActiveRecord
     public function fill(iterable $data): self
     {
         foreach ($data as $key => $value) {
-            if (!in_array($key, $this->fillable, true)) {
+           /* if (!in_array($key, $this->fillable, true)) {
                 continue;
-            }
+            }*/
 
             $this->{$key} = $value;
         }
