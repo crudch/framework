@@ -52,83 +52,40 @@ class CrutchDate extends DateTimeImmutable implements JsonSerializable
      * @var array
      */
     protected static $lang = [
-        'год|года|лет',
-        'месяц|месяца|месяцев',
-        'день|дня|дней',
-        'час|часа|часов',
-        'минуту|минуты|минут',
+        1 => 'год|года|лет',
+        2 => 'месяц|месяца|месяцев',
+        3 => 'день|дня|дней',
+        4 => 'час|часа|часов',
+        5 => 'минуту|минуты|минут',
     ];
 
     /**
-     * @var array
-     */
-    protected static $timeAgo = [
-        'через ',
-        ' назад',
-    ];
-
-    /**
-     * @return string
-     */
-    public function getHumansShort(): string
-    {
-        return $this->getDateDiff('');
-    }
-
-    /**
-     * @return string
-     */
-    public function getHumans(): string
-    {
-        return $this->getDateDiff(' назад');
-    }
-
-    /**
-     * @return string
-     */
-    public function getHumansPerson(): string
-    {
-        $date = new DateTimeImmutable();
-
-        if ($this->format('dmY') === $date->format('dmY')) {
-            return 'Сегодня';
-        }
-
-        if ($this->format('dmY') === $date->modify('-1 day')->format('dmY')) {
-            return 'Вчера';
-        }
-
-        return $this->getHumans();
-    }
-
-    /**
-     * @param string $word
+     * Получить дату в удобочитаемом представлении
      *
      * @return string
      */
-    protected function getDateDiff(string $word): string
+    public function humans(): string
     {
-        $diff = $this->getRealDateDiff();
+        $now = new DateTimeImmutable();
+        $diff = $this->getRealDateDiff($now);
 
-        foreach ((array)$diff['date'] as $key => $value) {
-            if ($value === 0) {
-                continue;
-            }
-
-            [$one, $two, $tree] = explode('|', self::$lang[$key]);
-
-            if ($value % 10 === 1 && $value % 100 !== 11) {
-                $string = $value . ' ' . $one;
-            } elseif ($value % 10 >= 2 && $value % 10 <= 4 && ($value % 100 < 10 || $value % 100 >= 20)) {
-                $string = $value . ' ' . $two;
-            } else {
-                $string = $value . ' ' . $tree;
-            }
-
-            return $string . $word;
+        if (true === $diff['invert']) {
+            return $this->future($now, $diff);
         }
 
-        return 'Только что';
+        return $this->past($now, $diff);
+    }
+
+    /**
+     * Получить количество времени
+     *
+     * @return string
+     */
+    public function age(): string
+    {
+        $diff = $this->getRealDateDiff(new DateTimeImmutable());
+
+        return $this->generateWord($diff['date'], ['before' => '', 'after' => '', 'default' => '']);
     }
 
     /**
@@ -139,25 +96,6 @@ class CrutchDate extends DateTimeImmutable implements JsonSerializable
     public function sqlFormat(): string
     {
         return $this->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRealDateDiff(): array
-    {
-        $date = $this->diff(new DateTimeImmutable());
-
-        return [
-            'date'   => [
-                $date->y,
-                $date->m,
-                $date->d,
-                $date->h,
-                $date->i,
-            ],
-            'invert' => $date->invert,
-        ];
     }
 
     /**
@@ -175,4 +113,89 @@ class CrutchDate extends DateTimeImmutable implements JsonSerializable
     {
         return $this->sqlFormat();
     }
+
+    /**
+     * @param DateTimeImmutable $now
+     * @param array $diff
+     *
+     * @return string
+     */
+    protected function future(DateTimeImmutable $now, array $diff): string
+    {
+        if ($this->format('dmY') === $now->modify('+1 day')->format('dmY')) {
+            return $this->format('Завтра в H:i');
+        }
+
+        return $this->generateWord($diff['date'], ['before' => 'Через ', 'after' => '', 'default' => 'Сейчас']);
+    }
+
+    /**
+     * @param DateTimeImmutable $now
+     * @param array $diff
+     *
+     * @return string
+     */
+    protected function past(DateTimeImmutable $now, array $diff): string
+    {
+        if ($this->format('dmY') === $now->modify('-1 day')->format('dmY')) {
+            return $this->format('Вчера в H:i');
+        }
+
+        return $this->generateWord($diff['date'], ['before' => '', 'after' => ' назад', 'default' => 'Только что']);
+    }
+
+    /**
+     * @param array $date
+     * @param array $params
+     *
+     * @return string
+     */
+    protected function generateWord(array $date, array $params): string
+    {
+        foreach ($date as $key => $value) {
+            if ($value === 0) {
+                continue;
+            }
+
+            if (4 === $key && $value > 5) {
+                return $this->format('Сегодня в H:i');
+            }
+
+            [$one, $two, $tree] = explode('|', self::$lang[$key]);
+
+            if ($value % 10 === 1 && $value % 100 !== 11) {
+                $string = $value . ' ' . $one;
+            } elseif ($value % 10 >= 2 && $value % 10 <= 4 && ($value % 100 < 10 || $value % 100 >= 20)) {
+                $string = $value . ' ' . $two;
+            } else {
+                $string = $value . ' ' . $tree;
+            }
+
+            return $params['before'] . $string . $params['after'];
+        }
+
+        return $params['default'];
+    }
+
+    /**
+     * @param DateTimeImmutable $dti
+     *
+     * @return array
+     */
+    protected function getRealDateDiff(DateTimeImmutable $dti): array
+    {
+        $date = $this->diff($dti);
+
+        return [
+            'date'   => [
+                1 => $date->y,
+                2 => $date->m,
+                3 => $date->d,
+                4 => $date->h,
+                5 => $date->i,
+            ],
+            'invert' => (bool)$date->invert,
+        ];
+    }
+
 }
