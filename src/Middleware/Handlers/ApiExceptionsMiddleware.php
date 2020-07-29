@@ -5,12 +5,13 @@ namespace Crudch\Middleware\Handlers;
 use Throwable;
 use Crudch\Http\Request;
 use Crudch\Http\Exceptions\MultiException;
+
 use function get_class;
 
 class ApiExceptionsMiddleware extends ExceptionsMiddleware
 {
     /**
-     * @param Request        $request
+     * @param Request $request
      * @param MultiException $e
      *
      * @return mixed
@@ -37,7 +38,7 @@ class ApiExceptionsMiddleware extends ExceptionsMiddleware
     }
 
     /**
-     * @param int        $code
+     * @param int $code
      * @param Throwable $e
      *
      * @return mixed

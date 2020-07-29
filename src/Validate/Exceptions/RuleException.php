@@ -2,7 +2,9 @@
 
 namespace Crudch\Validate\Exceptions;
 
-class RuleException extends \BadFunctionCallException
+use BadFunctionCallException;
+
+class RuleException extends BadFunctionCallException
 {
     protected $code = 500;
 }

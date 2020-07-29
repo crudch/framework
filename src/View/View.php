@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpIncludeInspection */
+
 namespace Crudch\View;
 
 use SplStack;
@@ -42,7 +44,7 @@ class View
 
     /**
      * @param string $name
-     * @param array  $params
+     * @param array $params
      *
      * @return string
      * @throws Throwable
@@ -55,7 +57,6 @@ class View
         try {
             ob_start();
             extract($params, EXTR_OVERWRITE);
-            /** @noinspection PhpIncludeInspection */
             require "{$this->path}/{$name}.php";
             $content = ob_get_clean();
         } catch (Throwable $e) {
@@ -81,7 +82,7 @@ class View
 
     /**
      * @param string $name
-     * @param mixed  $content
+     * @param mixed $content
      */
     public function block(string $name, $content): void
     {

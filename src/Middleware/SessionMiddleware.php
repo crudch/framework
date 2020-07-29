@@ -13,7 +13,7 @@ class SessionMiddleware implements MiddlewareInterface
 {
 
     /**
-     * @param Request  $request
+     * @param Request $request
      * @param callable $next
      *
      * @return mixed

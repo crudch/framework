@@ -25,7 +25,7 @@ abstract class ScalarValidate extends Validator
 
         if (!method_exists($this, $method = 'validate' . ucfirst(gettype($value)))) {
             throw new ValidateException(
-                $this->getMessage("Тип Поля {$this->field} неопределен")
+                $this->getMessage("Тип Поля {$this->field} не определен")
             );
         }
 

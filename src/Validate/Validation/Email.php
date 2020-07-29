@@ -22,7 +22,7 @@ class Email extends Validator
     {
         if (false === $value = filter_var($value, FILTER_VALIDATE_EMAIL)) {
             throw new ValidateException(
-                $this->getMessage("Поле {$this->field} должно быть действительным электронным адресом.")
+                $this->getMessage("Поле {$this->field} должно быть действительным электронным адресом")
             );
         }
 

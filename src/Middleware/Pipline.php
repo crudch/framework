@@ -2,6 +2,8 @@
 
 namespace Crudch\Middleware;
 
+use Closure;
+use SplQueue;
 use Crudch\Http\Request;
 
 /**
@@ -12,7 +14,7 @@ use Crudch\Http\Request;
 class Pipline
 {
     /**
-     * @var \SplQueue
+     * @var SplQueue
      */
     protected $queue;
 
@@ -21,7 +23,7 @@ class Pipline
      */
     public function __construct()
     {
-        $this->queue = new \SplQueue();
+        $this->queue = new SplQueue();
     }
 
     /**
@@ -41,7 +43,7 @@ class Pipline
     {
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->queue->dequeue();
-        $middleware = $middleware instanceof \Closure ? $middleware() : new $middleware;
+        $middleware = $middleware instanceof Closure ? $middleware() : new $middleware();
 
         return $middleware->handle($request, function ($request) {
             return $this->run($request);

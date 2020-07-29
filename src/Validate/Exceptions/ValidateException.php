@@ -2,7 +2,9 @@
 
 namespace Crudch\Validate\Exceptions;
 
-class ValidateException extends \Exception
+use Exception;
+
+class ValidateException extends Exception
 {
 
 }

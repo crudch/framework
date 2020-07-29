@@ -2,8 +2,10 @@
 
 namespace Crudch\Middleware;
 
+use RuntimeException;
 use Crudch\Http\Request;
 use Crudch\Routing\Route;
+use Crudch\Routing\RouteException;
 use Crudch\Routing\Router;
 
 /**
@@ -29,11 +31,11 @@ class RouteMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param Request  $request
+     * @param Request $request
      * @param callable $next
      *
      * @return mixed
-     * @throws \Crudch\Routing\RouteException
+     * @throws RouteException
      */
     public function handle(Request $request, callable $next)
     {
@@ -47,7 +49,7 @@ class RouteMiddleware implements MiddlewareInterface
         foreach ($route->getMiddleware() as $name) {
             /** @noinspection PhpUndefinedFieldInspection */
             if (!array_key_exists($name, $registrator::$middleware)) {
-                throw new \RuntimeException("Middleware [ {$name} ] не существует.");
+                throw new RuntimeException("Middleware [ {$name} ] не существует.");
             }
             $pipline->pipe($registrator::$middleware[$name]);
         }

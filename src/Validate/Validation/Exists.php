@@ -6,6 +6,8 @@ use Crudch\Validate\Validator;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function is_string;
+
 /**
  * Class Exists
  *
@@ -21,11 +23,14 @@ class Exists extends Validator
      */
     public function validate($value)
     {
-        if (null === $this->params || !\is_string($this->params)) {
+        if (null === $this->params || !is_string($this->params)) {
             throw new RuleException("Передан неверный параметр в unique [{$this->params}]");
         }
 
-        $sth = db()->prepare(/** @lang */"select exists(select * from {$this->params} where {$this->field} = :item)");
+        $sth = db()
+            ->prepare(/** @lang */
+                "select exists(select * from {$this->params} where {$this->field} = :item)"
+            );
         $sth->execute(['item' => $value]);
 
         if (false === (bool)$sth->fetchColumn()) {

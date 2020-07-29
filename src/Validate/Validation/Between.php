@@ -5,6 +5,9 @@ namespace Crudch\Validate\Validation;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function count;
+use function is_numeric;
+
 /**
  * Class Between
  *
@@ -30,7 +33,7 @@ class Between extends ScalarValidate
 
         $params = explode(',', $this->params);
 
-        if (2 !== \count($params) || !\is_numeric($params[0]) || !\is_numeric($params[1]) || $params[0] > $params[1]) {
+        if (2 !== count($params) || !is_numeric($params[0]) || !is_numeric($params[1]) || $params[0] > $params[1]) {
             throw new RuleException("Передан неверный параметр в between [{$this->params}]");
         }
 
@@ -65,7 +68,9 @@ class Between extends ScalarValidate
     {
         if (($length = mb_strlen($value)) < $this->min || $length > $this->max) {
             throw new ValidateException(
-                $this->getMessage("Количество символов в поле {$this->field} должно быть между {$this->min} и {$this->max}")
+                $this->getMessage(
+                    "Количество символов в поле {$this->field} должно быть между {$this->min} и {$this->max}"
+                )
             );
         }
 
@@ -80,9 +85,11 @@ class Between extends ScalarValidate
      */
     public function validateArray($value)
     {
-        if (($count = \count($value)) < $this->min || $count > $this->max) {
+        if (($count = count($value)) < $this->min || $count > $this->max) {
             throw new ValidateException(
-                $this->getMessage("Количество элементов в массиве {$this->field} должно быть между {$this->min} и {$this->max}")
+                $this->getMessage(
+                    "Количество элементов в массиве {$this->field} должно быть между {$this->min} и {$this->max}"
+                )
             );
         }
 

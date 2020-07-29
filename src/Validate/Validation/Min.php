@@ -5,6 +5,10 @@ namespace Crudch\Validate\Validation;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function count;
+use function is_numeric;
+use function mb_strlen;
+
 /**
  * Class Min
  *
@@ -19,7 +23,7 @@ class Min extends ScalarValidate
 
     public function setParamValidate(): void
     {
-        if (null === $this->params || !\is_numeric($this->params)) {
+        if (null === $this->params || !is_numeric($this->params)) {
             throw new RuleException("Передан неверный параметр в min [{$this->params}]");
         }
 
@@ -49,7 +53,7 @@ class Min extends ScalarValidate
      */
     public function validateString($value)
     {
-        if (\mb_strlen($value) < $this->min) {
+        if (mb_strlen($value) < $this->min) {
             throw new ValidateException(
                 $this->getMessage("Количество символов в поле {$this->field} должно быть не менее {$this->min}")
             );
@@ -66,7 +70,7 @@ class Min extends ScalarValidate
      */
     public function validateArray($value)
     {
-        if (\count($value) > $this->min) {
+        if (count($value) > $this->min) {
             throw new ValidateException(
                 $this->getMessage("Количество элементов в массиве {$this->field} должно быть не менее {$this->min}")
             );

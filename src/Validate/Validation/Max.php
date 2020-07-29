@@ -5,6 +5,10 @@ namespace Crudch\Validate\Validation;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function count;
+use function mb_strlen;
+use function is_numeric;
+
 /**
  * Class Max
  *
@@ -19,7 +23,7 @@ class Max extends ScalarValidate
 
     public function setParamValidate(): void
     {
-        if (null === $this->params || !\is_numeric($this->params)) {
+        if (null === $this->params || !is_numeric($this->params)) {
             throw new RuleException("Передан неверный параметр в max [{$this->params}]");
         }
 
@@ -49,7 +53,7 @@ class Max extends ScalarValidate
      */
     public function validateString($value)
     {
-        if (\mb_strlen($value) > $this->max) {
+        if (mb_strlen($value) > $this->max) {
             throw new ValidateException(
                 $this->getMessage("Количество символов в поле {$this->field} должно быть не более {$this->max}")
             );
@@ -66,7 +70,7 @@ class Max extends ScalarValidate
      */
     public function validateArray($value)
     {
-        if (\count($value) > $this->max) {
+        if (count($value) > $this->max) {
             throw new ValidateException(
                 $this->getMessage("Количество элементов в массиве {$this->field} должно быть не более {$this->max}")
             );

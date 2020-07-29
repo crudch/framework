@@ -2,6 +2,9 @@
 
 namespace Crudch\Validate;
 
+use ReflectionClass;
+use ReflectionException;
+
 /**
  * Class Validator
  *
@@ -28,8 +31,8 @@ abstract class Validator
      * Validator constructor.
      *
      * @param string $field
-     * @param array  $messages
-     * @param null   $params
+     * @param array $messages
+     * @param null $params
      */
     public function __construct($field, $messages = [], $params = null)
     {
@@ -46,7 +49,7 @@ abstract class Validator
     public function process($value)
     {
         if (null === $value || '' === $value) {
-            return $value;
+            return null;
         }
 
         return $this->validate($value);
@@ -62,8 +65,8 @@ abstract class Validator
     protected function getMessage($text): string
     {
         try {
-            $field = $this->field . '.' . lcfirst((new \ReflectionClass($this))->getShortName());
-        } catch (\ReflectionException $e) {
+            $field = $this->field . '.' . lcfirst((new ReflectionClass($this))->getShortName());
+        } catch (ReflectionException $e) {
             $field = null;
         }
 

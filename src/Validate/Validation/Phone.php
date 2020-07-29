@@ -5,6 +5,8 @@ namespace Crudch\Validate\Validation;
 use Crudch\Validate\Validator;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function count;
+
 /**
  * Class Phone
  *
@@ -36,6 +38,6 @@ class Phone extends Validator
      */
     protected function passNumber($number): bool
     {
-        return \count(array_flip(str_split($number))) > 4;
+        return count(array_flip(str_split($number))) > 4;
     }
 }

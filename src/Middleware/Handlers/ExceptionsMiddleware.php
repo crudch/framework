@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpRedundantCatchClauseInspection */
 
 namespace Crudch\Middleware\Handlers;

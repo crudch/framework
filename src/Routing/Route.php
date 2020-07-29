@@ -34,7 +34,7 @@ class Route
      *
      * @param string $handler
      * @param string $pattern
-     * @param array  $middleware
+     * @param array $middleware
      */
     public function __construct(string $handler, string $pattern, array $middleware = [])
     {

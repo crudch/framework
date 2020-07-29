@@ -6,6 +6,8 @@ use Crudch\Validate\Validator;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
 
+use function is_string;
+
 /**
  * Class Unique
  *
@@ -21,7 +23,7 @@ class Unique extends Validator
      */
     public function validate($value)
     {
-        if (null === $this->params || !\is_string($this->params)) {
+        if (null === $this->params || !is_string($this->params)) {
             throw new RuleException("Передан неверный параметр в unique [{$this->params}]");
         }
 

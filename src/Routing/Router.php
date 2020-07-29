@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpIncludeInspection */
 
 namespace Crudch\Routing;
@@ -64,8 +65,8 @@ class Router
     }
 
     /**
-     * @param string       $prefix
-     * @param callable     $callback
+     * @param string $prefix
+     * @param callable $callback
      * @param string|array $middleware
      */
     public function group(string $prefix, callable $callback, $middleware = []): void

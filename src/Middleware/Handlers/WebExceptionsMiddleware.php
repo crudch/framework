@@ -9,7 +9,7 @@ use Crudch\Http\Exceptions\MultiException;
 class WebExceptionsMiddleware extends ExceptionsMiddleware
 {
     /**
-     * @param Request        $request
+     * @param Request $request
      * @param MultiException $e
      *
      * @return mixed
