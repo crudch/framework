@@ -1,8 +1,9 @@
 <?php
 
-/** @noinspection PhpDocMissingThrowsInspection */
-
-/** @noinspection PhpUnhandledExceptionInspection */
+/**
+ * @noinspection PhpDocMissingThrowsInspection
+ * @noinspection PhpUnhandledExceptionInspection
+ */
 
 use Crudch\App;
 use Crudch\View\View;
@@ -13,8 +14,6 @@ use Crudch\Date\CrutchDate;
 use Crudch\Database\Connection;
 use Crudch\Http\Exceptions\AbortException;
 use Crudch\Database\Exceptions\TransactionException;
-
-/** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * @param string $name
