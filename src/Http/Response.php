@@ -2,6 +2,11 @@
 
 namespace Crudch\Http;
 
+use JsonException;
+use InvalidArgumentException;
+
+use function is_array;
+
 /**
  * Class Response
  *
@@ -57,8 +62,8 @@ class Response
     {
         try {
             $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-        } catch (\JsonException $e) {
-            throw new \InvalidArgumentException($e->getMessage());
+        } catch (JsonException $e) {
+            throw new InvalidArgumentException($e->getMessage());
         }
 
         $this->setHeader('Content-Type: application/json;charset=utf-8', $code);
@@ -76,7 +81,7 @@ class Response
      */
     public function withSession($name, $value = null): Response
     {
-        foreach (\is_array($name) ? $name : [$name => $value] as $key => $item) {
+        foreach (is_array($name) ? $name : [$name => $value] as $key => $item) {
             $_SESSION[$key] = $item;
         }
 

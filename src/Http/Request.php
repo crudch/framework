@@ -2,6 +2,10 @@
 
 namespace Crudch\Http;
 
+use function in_array;
+use function is_array;
+use function is_string;
+
 /**
  * Class Request
  *
@@ -52,41 +56,34 @@ class Request
      *
      * @return mixed
      */
-    public function get($params = null)
-    {
-        return $this->getData($this->get, $params);
-    }
-
-    /**
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function post($params = null)
-    {
-        return $this->getData($this->post, $params);
-    }
-
-    /**
-     * @param mixed $params
-     *
-     * @return mixed
-     */
     public function cookie($params = null)
     {
         return $this->getData($this->cookie, $params);
     }
 
     /**
-     * @return array
+     * @param $data
+     * @param $params
+     *
+     * @return array|string|null
      */
-    public function all(): array
+    protected function getData(&$data, $params)
     {
-        if (null === $this->all) {
-            $this->all = array_merge($this->post(), $this->get());
+        if (null === $params) {
+            return $data;
         }
 
-        return $this->all;
+        if (is_string($params)) {
+            return $data[$params] ?? null;
+        }
+
+        $result = [];
+
+        foreach ((array)$params as $arg) {
+            $result[$arg] = $data[$arg] ?? null;
+        }
+
+        return $result;
     }
 
     /**
@@ -110,7 +107,7 @@ class Request
     /**
      * @return array
      */
-    protected function getHttpHeaders()
+    protected function getHttpHeaders(): array
     {
         $headers = [];
 
@@ -122,27 +119,47 @@ class Request
     }
 
     /**
-     * @param mixed $params
-     *
-     * @return string|array|null
-     */
-    public function input($params = null)
-    {
-        $all = $this->all();
-
-        return $this->getData($all, $params);
-    }
-
-    /**
-     * @deprecated тоже самое, что и get(),post(), input()
-     *
      * @param array|string $params
      *
      * @return array
+     * @deprecated тоже самое, что и get(),post(), input()
+     *
      */
     public function only($params): array
     {
         return array_intersect_key($this->all(), array_flip((array)$params));
+    }
+
+    /**
+     * @return array
+     */
+    public function all(): array
+    {
+        if (null === $this->all) {
+            $this->all = array_merge($this->post(), $this->get());
+        }
+
+        return $this->all;
+    }
+
+    /**
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function post($params = null)
+    {
+        return $this->getData($this->post, $params);
+    }
+
+    /**
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function get($params = null)
+    {
+        return $this->getData($this->get, $params);
     }
 
     /**
@@ -155,18 +172,8 @@ class Request
         $params = (array)$params;
 
         return array_filter($this->all(), static function ($key) use (&$params) {
-            return !\in_array($key, $params, true);
+            return !in_array($key, $params, true);
         }, ARRAY_FILTER_USE_KEY);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function has($name): bool
-    {
-        return array_key_exists($name, $this->all());
     }
 
     /**
@@ -187,23 +194,6 @@ class Request
     public function file($filename): ?array
     {
         return $this->files[$filename] ?? null;
-    }
-
-    /**
-     * @param string|array $name
-     * @param string|null  $value
-     *
-     * @return Request
-     */
-    public function setAttributes($name, $value = null): Request
-    {
-        $this->all = null;
-
-        foreach (\is_array($name) ? $name : [$name => $value] as $key => $item) {
-            \is_string($key) && $this->get[$key] = $item;
-        }
-
-        return $this;
     }
 
     /**
@@ -233,6 +223,14 @@ class Request
     }
 
     /**
+     * @return int
+     */
+    public function clientIp2long(): int
+    {
+        return (int)sprintf('%u', ip2long($this->clientIp()));
+    }
+
+    /**
      * @return mixed [ip address or false]
      */
     public function clientIp()
@@ -242,48 +240,6 @@ class Request
             FILTER_VALIDATE_IP,
             FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
         );
-    }
-
-    /**
-     * @return int
-     */
-    public function clientIp2long(): int
-    {
-        return (int)sprintf('%u', ip2long($this->clientIp()));
-    }
-
-    /**
-     * @param $data
-     * @param $params
-     *
-     * @return array|string|null
-     */
-    protected function getData(&$data, $params)
-    {
-        if (null === $params) {
-            return $data;
-        }
-
-        if (\is_string($params)) {
-            return $data[$params] ?? null;
-        }
-
-        $result = [];
-
-        foreach ((array)$params as $arg) {
-            $result[$arg] = $data[$arg] ?? null;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public function __set($name, $value)
-    {
-        $this->setAttributes($name, $value);
     }
 
     /**
@@ -298,11 +254,59 @@ class Request
 
     /**
      * @param $name
+     * @param $value
+     */
+    public function __set($name, $value)
+    {
+        $this->setAttributes($name, $value);
+    }
+
+    /**
+     * @param mixed $params
+     *
+     * @return string|array|null
+     */
+    public function input($params = null)
+    {
+        $all = $this->all();
+
+        return $this->getData($all, $params);
+    }
+
+    /**
+     * @param string|array $name
+     * @param string|null $value
+     *
+     * @return Request
+     */
+    public function setAttributes($name, $value = null): Request
+    {
+        $this->all = null;
+
+        foreach (is_array($name) ? $name : [$name => $value] as $key => $item) {
+            is_string($key) && $this->get[$key] = $item;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $name
      *
      * @return bool
      */
     public function __isset($name)
     {
         return $this->has($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function has($name): bool
+    {
+        return array_key_exists($name, $this->all());
     }
 }
