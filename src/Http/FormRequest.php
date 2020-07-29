@@ -2,6 +2,9 @@
 
 namespace Crudch\Http;
 
+use Traversable;
+use ArrayIterator;
+use IteratorAggregate;
 use Crudch\Http\Exceptions\MultiException;
 use Crudch\Validate\Exceptions\RuleException;
 use Crudch\Validate\Exceptions\ValidateException;
@@ -12,7 +15,7 @@ use Crudch\Validate\Exceptions\ValidateException;
  * @mixin Request
  * @package App\Component
  */
-abstract class FormRequest implements \IteratorAggregate
+abstract class FormRequest implements IteratorAggregate
 {
     /**
      * @var Request
@@ -42,7 +45,7 @@ abstract class FormRequest implements \IteratorAggregate
     /**
      * FormRequest constructor.
      *
-     * @param Request        $request
+     * @param Request $request
      * @param MultiException $multi
      *
      * @throws MultiException
@@ -109,10 +112,10 @@ abstract class FormRequest implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->request->all());
+        return new ArrayIterator($this->request->all());
     }
 }

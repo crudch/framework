@@ -2,12 +2,23 @@
 
 namespace Crudch\Http\Exceptions;
 
+use ArrayIterator;
+
+use Throwable;
+use Exception;
+use Countable;
+use Traversable;
+use JsonSerializable;
+use IteratorAggregate;
+
+use function count;
+
 /**
  * Class MultiException
  *
  * @package Crudch
  */
-class MultiException extends \Exception implements \JsonSerializable, \IteratorAggregate, \Countable
+class MultiException extends Exception implements JsonSerializable, IteratorAggregate, Countable
 {
     /**
      * @var array
@@ -15,12 +26,12 @@ class MultiException extends \Exception implements \JsonSerializable, \IteratorA
     private $data = [];
 
     /**
-     * @param string     $key
-     * @param \Throwable $e
+     * @param string $key
+     * @param Throwable $e
      *
      * @return MultiException
      */
-    public function add(string $key, \Throwable $e): MultiException
+    public function add(string $key, Throwable $e): MultiException
     {
         $this->data[$key] = $e;
 
@@ -40,7 +51,7 @@ class MultiException extends \Exception implements \JsonSerializable, \IteratorA
      */
     public function toArray(): array
     {
-        return array_map(function (\Throwable $e) {
+        return array_map(static function (Throwable $e) {
             return $e->getMessage();
         }, $this->data);
     }
@@ -54,11 +65,11 @@ class MultiException extends \Exception implements \JsonSerializable, \IteratorA
     }
 
     /**
-     * @return \ArrayIterator|\Traversable
+     * @return ArrayIterator|Traversable
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->data);
+        return new ArrayIterator($this->data);
     }
 
     /**
@@ -66,6 +77,6 @@ class MultiException extends \Exception implements \JsonSerializable, \IteratorA
      */
     public function count(): int
     {
-        return \count($this->data);
+        return count($this->data);
     }
 }
