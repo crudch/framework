@@ -2,9 +2,9 @@
 
 namespace Crudch\Foundation;
 
+use Throwable;
 use Crudch\App;
 use ReflectionMethod;
-use ReflectionException;
 use ReflectionParameter;
 use Crudch\Http\Request;
 
@@ -20,7 +20,7 @@ abstract class Controller
      * @param Request $request
      *
      * @return mixed
-     * @throws ReflectionException
+     * @throws Throwable
      */
     public function callAction(string $action, Request $request)
     {
