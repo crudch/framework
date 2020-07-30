@@ -5,8 +5,8 @@ namespace Crudch\Middleware;
 use RuntimeException;
 use Crudch\Http\Request;
 use Crudch\Routing\Route;
-use Crudch\Routing\RouteException;
 use Crudch\Routing\Router;
+use Crudch\Routing\RouteException;
 
 /**
  * Class RouteMiddleware
@@ -54,7 +54,7 @@ class RouteMiddleware implements MiddlewareInterface
             $pipline->pipe($registrator::$middleware[$name]);
         }
 
-        $pipline->pipe(function () use (&$route) {
+        $pipline->pipe(static function () use (&$route) {
             return new ControllerMiddleware(... $route->getHandler());
         });
 

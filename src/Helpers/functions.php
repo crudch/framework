@@ -26,7 +26,7 @@ function app(string $name)
 }
 
 /**
- * @param string $key
+ * @param string|null $key
  *
  * @return mixed
  */

@@ -30,7 +30,7 @@ class Response
 
     /**
      * @param string $url
-     * @param int    $code
+     * @param int $code
      *
      * @return Response
      */
@@ -54,7 +54,7 @@ class Response
 
     /**
      * @param mixed $data
-     * @param int   $code
+     * @param int $code
      *
      * @return Response
      */
@@ -89,9 +89,9 @@ class Response
     }
 
     /**
-     * @param array  $data [name => value]
-     * @param bool   $secure
-     * @param int    $expire
+     * @param array $data [name => value]
+     * @param bool $secure
+     * @param int $expire
      * @param string $path
      * @param string $domain
      *
@@ -118,8 +118,8 @@ class Response
 
     /**
      * @param array $header
-     * @param int   $code
-     * @param bool  $replace
+     * @param null $code
+     * @param bool $replace
      *
      * @return Response
      */
@@ -148,8 +148,8 @@ class Response
      * Устанавливает заголовок
      *
      * @param string $header
-     * @param int    $code
-     * @param bool   $replace
+     * @param null $code
+     * @param bool $replace
      */
     protected function setHeader($header, $code = null, $replace = true): void
     {

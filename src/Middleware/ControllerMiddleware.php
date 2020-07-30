@@ -2,7 +2,7 @@
 
 namespace Crudch\Middleware;
 
-use ReflectionException;
+use Throwable;
 use Crudch\Http\Request;
 use Crudch\Foundation\Controller;
 
@@ -37,11 +37,11 @@ class ControllerMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param Request  $request
+     * @param Request $request
      * @param callable $next
      *
      * @return mixed
-     * @throws ReflectionException
+     * @throws Throwable
      */
     public function handle(Request $request, callable $next)
     {
