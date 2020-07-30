@@ -57,6 +57,12 @@ trait ActiveRecord
         return $sth->fetchObject(static::class);
     }
 
+    /**
+     * @param string $order
+     * @param int $limit
+     *
+     * @return static[]
+     */
     public static function all($order = 'asc', $limit = 0): array
     {
         $sql = /** @lang */
