@@ -35,8 +35,8 @@ class Cache
 
     /**
      * @param string $key
-     * @param mixed  $value
-     * @param int    $time
+     * @param mixed $value
+     * @param int $time
      *
      * @return bool
      */
@@ -46,13 +46,17 @@ class Cache
     }
 
     /**
-     * @param string $key
+     * @param string|array $key
      *
      * @return bool
      */
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
-        return $this->driver->delete($key);
+        foreach ((array)$key as $value) {
+            $this->driver->delete($value);
+        }
+
+        return true;
     }
 
     /**
