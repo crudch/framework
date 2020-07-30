@@ -203,8 +203,7 @@ function crutchDate(string $time = 'now')
 function remember(string $key, callable $callback, int $time = 0)
 {
     if (false === $cache = cache()->get($key)) {
-        $cache = $callback();
-        cache()->set($key, $cache, $time);
+        cache()->set($key, $cache = $callback(), $time);
     }
 
     return $cache;
@@ -241,7 +240,7 @@ function transaction(callable $callback): bool
  */
 function url($url): string
 {
-    return $url;
+    return (string)$url;
 }
 
 /**
@@ -412,8 +411,8 @@ function compress(string $string): string
         '#^([\t ])+#m'                                                    => '',
         '#([\t ])+$#m'                                                    => '',
         '#//[a-zA-Z0-9 ]+$#m'                                             => '',
-        '#[\r\n]+([\t ]?[\r\n]+)+#s'                                      => /*"\n"*/' ',
-        '#[\r\n\t ]+#s'                                                  => ' ',
+        '#[\r\n]+([\t ]?[\r\n]+)+#s'                                      => ' ',
+        '#[\r\n\t ]+#s'                                                   => ' ',
         '#>[\r\n\t ]+<#s'                                                 => '><',
         '#}[\r\n\t ]+#s'                                                  => '}',
         '#}[\r\n\t ]+,[\r\n\t ]+#s'                                       => '},',

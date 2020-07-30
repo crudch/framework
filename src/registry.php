@@ -30,8 +30,8 @@ return [
      * Инициализация Cache
      */
     Cache::class => static function () {
-        $cache = config('cache_driver');
+        $cache_driver = config('cache_driver');
 
-        return new Cache(new $cache(root_path('/cache')));
+        return new Cache(new $cache_driver(root_path('/cache')));
     },
 ];
