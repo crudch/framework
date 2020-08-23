@@ -382,11 +382,11 @@ function csrfKey()
 }
 
 /**
- * @return string
+ * Display CSRF field
  */
-function csrfField(): string
+function csrfField()
 {
-    return '<input type="hidden" name="csrf_key" value="' . csrfKey() . '">';
+    echo '<input type="hidden" name="csrf_key" value="' . csrfKey() . '">';
 }
 
 /**
