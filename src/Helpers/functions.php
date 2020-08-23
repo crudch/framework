@@ -382,6 +382,14 @@ function csrfKey()
 }
 
 /**
+ * @return string
+ */
+function csrfField(): string
+{
+    return '<input type="hidden" name="csrf_key" value="' . csrfKey() . '">';
+}
+
+/**
  * Получить random строку
  *
  * @param int $length
