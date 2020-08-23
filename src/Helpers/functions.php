@@ -426,6 +426,20 @@ function compress(string $string): string
 }
 
 /**
+ * @param string $string
+ *
+ * @return string
+ */
+function compress2(string $string): string
+{
+    $string = str_replace([chr(9), chr(10), chr(11), chr(13)], ' ', $string);
+    $string = preg_replace(['~<!--.*-->~U', '~[ ]+~'], ' ', (string)$string);
+    $string = str_replace('> <', '><', $string);
+
+    return $string;
+}
+
+/**
  * @param int $number
  * @param string $words [1|2|0] - [год|года|лет]
  *
