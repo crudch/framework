@@ -97,7 +97,7 @@ class Request
             $this->headers = $this->getHttpHeaders();
         }
 
-        if (null !== $params) {
+        if ($params !== null) {
             $params = strtoupper($params);
         }
 
@@ -285,6 +285,36 @@ class Request
 
         foreach (is_array($name) ? $name : [$name => $value] as $key => $item) {
             is_string($key) && $this->get[$key] = $item;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $targets
+     *
+     * @return Request
+     */
+    public function deleteAttribute(string $name, $targets = null): Request
+    {
+        $this->all = null;
+        $vars = get_object_vars($this);
+
+        if ($targets === null) {
+            foreach ($vars as $key => $var) {
+                if (is_array($var) && array_key_exists($name, $var)) {
+                    unset($this->{$key}[$name]);
+                }
+            }
+
+            return $this;
+        }
+
+        foreach ((array)$targets as $target) {
+            if (isset($vars[$target]) && is_array($vars[$target]) && array_key_exists($name, $vars[$target])) {
+                unset($this->{$target}[$name]);
+            }
         }
 
         return $this;
