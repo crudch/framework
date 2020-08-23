@@ -374,6 +374,14 @@ function token(?string $salt = null): string
 }
 
 /**
+ * @return string|null
+ */
+function csrfKey()
+{
+    return $_SESSION['X-Key'] ?? request()->cookie('X-Key');
+}
+
+/**
  * Получить random строку
  *
  * @param int $length

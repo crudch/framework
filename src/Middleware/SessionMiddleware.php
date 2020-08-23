@@ -3,6 +3,7 @@
 namespace Crudch\Middleware;
 
 use Crudch\Http\Request;
+use Crudch\Http\Response;
 
 /**
  * Class SessionMiddleware
@@ -22,6 +23,15 @@ class SessionMiddleware implements MiddlewareInterface
     {
         session_start();
 
-        return $next($request);
+        if (!empty($request->cookie('X-Key'))) {
+            return $next($request);
+        }
+
+        $key = $_SESSION['X-Key'] ?? $_SESSION['X-Key'] = randomString();
+
+        /** @var Response $response */
+        $response = $next($request);
+
+        return $response->withCookie(['X-Key' => $key]);
     }
 }
