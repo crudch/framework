@@ -98,7 +98,7 @@ class Request
         }
 
         if ($params !== null) {
-            $params = strtoupper($params);
+            $params = strtoupper(str_replace('-', '_', $params));
         }
 
         return $this->getData($this->headers, $params);
