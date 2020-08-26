@@ -28,7 +28,7 @@ abstract class Controller
 
         $args = array_map(static function (ReflectionParameter $param) use ($request) {
             if (null === $arg = $param->getClass()) {
-                return $request->get($param->getName());
+                return $request->input($param->getName());
             }
 
             return App::get($arg->getName());
