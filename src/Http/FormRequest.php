@@ -65,7 +65,8 @@ abstract class FormRequest implements IteratorAggregate
         $data = $this->request->all();
 
         foreach ($this->rules() as $key => $rules) {
-            $value = isset($data[$key]) ? trim($data[$key]) : null;
+            $value = $this->getValue($data, $key);
+
             foreach (explode('|', $rules) as $rule) {
                 $args = null;
                 if (false !== strpos($rule, ':')) {
@@ -117,5 +118,20 @@ abstract class FormRequest implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->request->all());
+    }
+
+    /**
+     * @param array $data
+     * @param $key
+     *
+     * @return mixed
+     */
+    protected function getValue(array $data, $key)
+    {
+        if (isset($data[$key])) {
+            return is_array($data[$key]) ? $data[$key] : trim($data[$key]);
+        }
+
+        return null;
     }
 }
