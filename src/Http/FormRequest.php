@@ -120,6 +120,21 @@ abstract class FormRequest implements IteratorAggregate
         return new ArrayIterator($this->request->all());
     }
 
+    public function __get($name)
+    {
+        return $this->request->input($name);
+    }
+
+    public function __set($name, $value)
+    {
+        $this->request->setAttributes($name, $value);
+    }
+
+    public function __isset($name)
+    {
+        return $this->request->has($name);
+    }
+
     /**
      * @param array $data
      * @param $key
