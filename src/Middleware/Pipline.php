@@ -27,9 +27,9 @@ class Pipline
     }
 
     /**
-     * @param string $middleware
+     * @param string|Closure $middleware
      */
-    public function pipe(string $middleware): void
+    public function pipe($middleware): void
     {
         $this->queue->enqueue($middleware);
     }
