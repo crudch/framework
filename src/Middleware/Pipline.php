@@ -29,7 +29,7 @@ class Pipline
     /**
      * @param string $middleware
      */
-    public function pipe($middleware): void
+    public function pipe(string $middleware): void
     {
         $this->queue->enqueue($middleware);
     }
@@ -45,7 +45,7 @@ class Pipline
         $middleware = $this->queue->dequeue();
         $middleware = $middleware instanceof Closure ? $middleware() : new $middleware();
 
-        return $middleware->handle($request, function ($request) {
+        return $middleware->handle($request, function (Request $request) {
             return $this->run($request);
         });
     }
