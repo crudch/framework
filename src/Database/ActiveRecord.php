@@ -4,7 +4,8 @@ namespace Crudch\Database;
 
 use PDO;
 use Crudch\Date\CrutchDate;
-use function in_array, is_array;
+
+use function is_array;
 
 /**
  * Trait ActiveRecord
