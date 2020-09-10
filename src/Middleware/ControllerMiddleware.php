@@ -29,7 +29,7 @@ class ControllerMiddleware implements MiddlewareInterface
      * @param string $controller
      * @param string $action
      */
-    public function __construct($controller, $action)
+    public function __construct(string $controller, string $action)
     {
         $controller = 'App\\Controllers\\' . $controller;
         $this->controller = new $controller();

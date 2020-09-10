@@ -25,7 +25,7 @@ class RouteMiddleware implements MiddlewareInterface
      *
      * @param string $mode
      */
-    public function __construct($mode)
+    public function __construct(string $mode)
     {
         $this->mode = $mode;
     }

@@ -197,5 +197,4 @@ class CrutchDate extends DateTimeImmutable implements JsonSerializable
             'invert' => (bool)$date->invert,
         ];
     }
-
 }
